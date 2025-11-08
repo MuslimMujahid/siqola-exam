@@ -46,7 +46,7 @@ export default function LoginPage() {
   // Update form when role changes
   useEffect(() => {
     form.setFieldValue("role", selectedRole);
-  }, [selectedRole]);
+  }, [form, selectedRole]);
 
   useEffect(() => {
     if (isAuthenticated) {

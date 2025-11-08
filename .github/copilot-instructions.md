@@ -25,6 +25,8 @@ This is a **Turborepo monorepo** both frontend and backend for an online exam pl
 - **Component Library**: Radix UI + Custom components
 - **State Management**: React Query, Zustand
 - **Animations**: Framer Motion
+- **Forms**: Tanstack Form, Zod for validation
+- **Icons**: Lucide Icons
 
 ## Coding Guidelines
 
@@ -74,9 +76,10 @@ This is a **Turborepo monorepo** both frontend and backend for an online exam pl
 
 ### Components
 
-- Use shadcn/ui as the foundation for all UI elements whenever possible.
+- Use shadcn components as the base for all UI elements.
 - Create custom components only when necessary.
 - Ensure components are reusable and maintainable.
+- Use icons from Lucide Icons for consistency.
 
 ### Code Quality
 
