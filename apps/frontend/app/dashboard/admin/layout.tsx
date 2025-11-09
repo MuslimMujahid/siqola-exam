@@ -20,6 +20,8 @@ import {
   FileText,
   Activity,
   HelpCircle,
+  ChevronDown,
+  UserCog,
 } from "lucide-react";
 
 // Mock data - replace with actual API calls
@@ -166,7 +168,52 @@ export default function AdminLayout({
           <nav className="flex items-center gap-1 -mb-px">
             {navigationItems.map((item) => {
               const Icon = item.icon;
-              const isActive = pathname === item.href;
+              const isActive =
+                pathname === item.href ||
+                (item.href === "/dashboard/admin/users" &&
+                  (pathname === "/dashboard/admin/users" ||
+                    pathname === "/dashboard/admin/groups"));
+
+              // Special handling for User Management with dropdown
+              if (item.href === "/dashboard/admin/users") {
+                return (
+                  <DropdownMenu key={item.href}>
+                    <DropdownMenuTrigger asChild>
+                      <button
+                        className={`flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors ${
+                          isActive
+                            ? "border-primary text-foreground"
+                            : "border-transparent text-muted-foreground hover:text-foreground hover:border-border"
+                        }`}
+                      >
+                        <Icon className="w-4 h-4" />
+                        {item.label}
+                        <ChevronDown className="w-3 h-3" />
+                      </button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="start">
+                      <DropdownMenuItem asChild>
+                        <Link
+                          href="/dashboard/admin/users"
+                          className="cursor-pointer"
+                        >
+                          <Users className="w-4 h-4 mr-2" />
+                          Users
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem asChild>
+                        <Link
+                          href="/dashboard/admin/groups"
+                          className="cursor-pointer"
+                        >
+                          <UserCog className="w-4 h-4 mr-2" />
+                          Groups
+                        </Link>
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                );
+              }
 
               return (
                 <Link
