@@ -4,8 +4,4 @@ export class UpdateUserDto {
   @IsOptional()
   @IsString()
   fullName?: string;
-
-  @IsOptional()
-  @IsString()
-  studentId?: string;
 }

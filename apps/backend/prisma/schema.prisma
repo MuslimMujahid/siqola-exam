@@ -7,6 +7,7 @@
 generator client {
   provider = "prisma-client"
   output   = "../generated/prisma"
+  moduleFormat = "cjs"
 }
 
 datasource db {
@@ -26,13 +27,14 @@ enum MembershipStatus {
 }
 
 model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  password  String
-  fullName  String
-  studentId String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id            String   @id @default(cuid())
+  email         String   @unique
+  password      String
+  fullName      String
+  phoneNumber   String
+  emailVerified Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
   memberships             Membership[]
   emailVerificationTokens EmailVerificationToken[]
@@ -45,6 +47,7 @@ model Institution {
   id        String   @id @default(cuid())
   name      String
   logo      String?
+  address   String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -59,6 +62,7 @@ model Membership {
   userId        String
   institutionId String
   role          Role
+  studentId     String?
   status        MembershipStatus @default(ACTIVE)
   createdAt     DateTime         @default(now())
   updatedAt     DateTime         @updatedAt

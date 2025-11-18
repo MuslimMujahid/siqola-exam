@@ -65,63 +65,17 @@ export interface LoginResponse {
 
 /**
  * Register a new institution with an admin user
- * This is a two-step process:
- * 1. Create the institution
- * 2. Create the admin user with the institution ID
  */
 export async function registerInstitution(
   data: RegisterInstitutionRequest
 ): Promise<RegisterInstitutionResponse> {
-  // Step 1: Create the institution
-  const institutionResponse = await apiClient.post<{
-    id: string;
-    name: string;
-    logo?: string;
-    createdAt: string;
-  }>("/institutions", {
-    name: data.institutionName,
-    logo: undefined,
-  } as CreateInstitutionDto);
+  console.log("Registering institution with data:", data);
+  const response = await apiClient.post<RegisterInstitutionResponse>(
+    "/auth/register-institution",
+    data
+  );
 
-  const institution = institutionResponse.data;
-
-  // Step 2: Register the admin user
-  const userResponse = await apiClient.post<{
-    user: {
-      id: string;
-      email: string;
-      fullName: string;
-      createdAt: string;
-    };
-    membership: {
-      id: string;
-      userId: string;
-      institutionId: string;
-      role: string;
-      status: string;
-      institution: {
-        id: string;
-        name: string;
-      };
-    };
-    verificationToken: {
-      token: string;
-      expiresAt: string;
-    };
-  }>("/auth/register", {
-    email: data.email,
-    password: data.password,
-    fullName: data.institutionName,
-    institutionId: institution.id,
-    role: "ADMIN",
-  } as RegisterUserDto);
-
-  return {
-    institution,
-    user: userResponse.data.user,
-    membership: userResponse.data.membership,
-    verificationToken: userResponse.data.verificationToken,
-  };
+  return response.data;
 }
 
 /**

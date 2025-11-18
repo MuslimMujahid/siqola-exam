@@ -7,4 +7,7 @@ export class CreateInstitutionDto {
   @IsOptional()
   @IsString()
   logo?: string;
+
+  @IsString()
+  address: string;
 }

@@ -1,7 +1,7 @@
 "use client";
 
+import React from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useForm } from "@tanstack/react-form";
 import { useMutation } from "@tanstack/react-query";
 import { motion } from "framer-motion";
@@ -15,33 +15,17 @@ import { Label } from "@/components/ui/label";
 import { CardContent, CardFooter } from "@/components/ui/card";
 
 export function InstitutionRegisterForm() {
-  const router = useRouter();
-  const { setInstitution, setUser, setAuthenticated, setLoading, setError } =
-    useAuthStore();
+  const [registrationSuccess, setRegistrationSuccess] = React.useState(false);
+  const [registeredEmail, setRegisteredEmail] = React.useState("");
+  const { setLoading, setError } = useAuthStore();
 
   const registerMutation = useMutation({
     mutationFn: registerInstitution,
     onSuccess: (data) => {
-      // Store institution and user data in auth store
-      setInstitution({
-        id: data.institution.id,
-        institutionName: data.institution.name,
-        email: data.user.email,
-        address: undefined,
-        phoneNumber: undefined,
-      });
-      setUser({
-        id: data.user.id,
-        email: data.user.email,
-        fullName: data.user.fullName,
-        role: data.membership.role,
-      });
-      setAuthenticated(true);
       setError(null);
       setLoading(false);
-
-      // Redirect to dashboard
-      router.push("/dashboard");
+      setRegisteredEmail(data.user.email);
+      setRegistrationSuccess(true);
     },
     onError: (error: AxiosError<{ message: string; error?: string }>) => {
       setLoading(false);
@@ -78,6 +62,70 @@ export function InstitutionRegisterForm() {
       onChange: institutionRegisterSchema,
     },
   });
+
+  // Show success message after registration
+  if (registrationSuccess) {
+    return (
+      <>
+        <CardContent className="space-y-4 p-6 pt-0">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="rounded-lg bg-primary/10 border border-primary/20 p-6 space-y-4"
+          >
+            <div className="flex items-start gap-3">
+              <div className="rounded-lg bg-primary/20 p-2 mt-0.5">
+                <svg
+                  className="w-6 h-6 text-primary"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+              </div>
+              <div className="space-y-2 flex-1">
+                <h3 className="font-semibold text-lg">
+                  Registration Successful!
+                </h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  We&apos;ve sent a verification email to{" "}
+                  <span className="font-medium text-foreground">
+                    {registeredEmail}
+                  </span>
+                  . Please check your inbox and click the verification link to
+                  activate your account.
+                </p>
+                <div className="pt-2 space-y-1">
+                  <p className="text-xs text-muted-foreground">
+                    • Check your spam folder if you don&apos;t see the email
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    • The verification link will expire in 24 hours
+                  </p>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        </CardContent>
+        <CardFooter className="flex flex-col space-y-4 p-6 pt-0">
+          <Link href="/login" className="w-full">
+            <Button
+              type="button"
+              className="w-full h-10 rounded-md transition-all hover:scale-[1.01] active:scale-[0.99]"
+            >
+              Go to Login
+            </Button>
+          </Link>
+        </CardFooter>
+      </>
+    );
+  }
 
   return (
     <form

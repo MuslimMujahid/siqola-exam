@@ -23,13 +23,16 @@ export class RegisterUserDto {
   @IsString()
   fullName: string;
 
-  @IsOptional()
   @IsString()
-  studentId?: string;
+  phoneNumber: string;
 
   @IsString()
   institutionId: string;
 
   @IsEnum(Role)
   role: Role;
+
+  @IsOptional()
+  @IsString()
+  studentId?: string;
 }
