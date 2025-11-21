@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { AuthGuard } from "@/components/auth/auth-guard";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,6 +12,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Notification } from "@/components/dashboard/notification";
+import { useLogout } from "@/hooks/use-logout";
 import {
   User,
   Settings,
@@ -61,6 +63,7 @@ export default function ExaminerLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const { logout } = useLogout();
   const [activeInstitutionId, setActiveInstitutionId] = useState<number>(
     mockUser.institutions[0].id
   );
@@ -74,129 +77,130 @@ export default function ExaminerLayout({
   ).length;
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="border-b border-border/50 bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
-        <div className="container mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <h1 className="text-lg font-semibold tracking-tight text-primary">
-                SiqolaExam
-              </h1>
+    <AuthGuard allowedRoles={["EXAMINER"]}>
+      <div className="min-h-screen bg-background">
+        {/* Header */}
+        <header className="border-b border-border/50 bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
+          <div className="container mx-auto px-6 py-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <h1 className="text-lg font-semibold tracking-tight text-primary">
+                  SiqolaExam
+                </h1>
 
-              {/* Institution Switcher */}
-              {mockUser.institutions.length > 1 && (
+                {/* Institution Switcher */}
+                {mockUser.institutions.length > 1 && (
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <button className="flex items-center gap-2 px-3 py-1.5 text-sm rounded-md border border-border/50 hover:bg-muted/50 transition-colors">
+                        <Building2 className="w-4 h-4 text-muted-foreground" />
+                        <span className="font-medium">
+                          {activeInstitution.name}
+                        </span>
+                        <ChevronDown className="w-4 h-4 text-muted-foreground" />
+                      </button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="start" className="w-64">
+                      <DropdownMenuLabel className="text-xs text-muted-foreground">
+                        Switch Institution
+                      </DropdownMenuLabel>
+                      <DropdownMenuSeparator />
+                      {mockUser.institutions.map((institution) => (
+                        <DropdownMenuItem
+                          key={institution.id}
+                          onClick={() => setActiveInstitutionId(institution.id)}
+                          className="cursor-pointer"
+                        >
+                          <div className="flex items-center gap-3 w-full">
+                            <Building2
+                              className={`w-4 h-4 ${
+                                institution.id === activeInstitutionId
+                                  ? "text-primary"
+                                  : "text-muted-foreground"
+                              }`}
+                            />
+                            <div className="flex-1">
+                              <div className="text-sm font-medium">
+                                {institution.name}
+                              </div>
+                              <div className="text-xs text-muted-foreground">
+                                {institution.role}
+                              </div>
+                            </div>
+                            {institution.id === activeInstitutionId && (
+                              <Check className="w-4 h-4 text-primary" />
+                            )}
+                          </div>
+                        </DropdownMenuItem>
+                      ))}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                )}
+              </div>
+              <div className="flex items-center gap-3">
+                {/* Notifications dropdown */}
+                <Notification
+                  newNotificationsCount={newNotificationsCount}
+                  notifications={mockNotifications}
+                />
+
+                {/* User menu dropdown */}
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <button className="flex items-center gap-2 px-3 py-1.5 text-sm rounded-md border border-border/50 hover:bg-muted/50 transition-colors">
-                      <Building2 className="w-4 h-4 text-muted-foreground" />
-                      <span className="font-medium">
-                        {activeInstitution.name}
-                      </span>
-                      <ChevronDown className="w-4 h-4 text-muted-foreground" />
+                    <button className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center text-primary font-medium hover:bg-primary/20 transition-colors">
+                      {mockUser.name.charAt(0)}
                     </button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="start" className="w-64">
-                    <DropdownMenuLabel className="text-xs text-muted-foreground">
-                      Switch Institution
+                  <DropdownMenuContent align="end" className="w-56">
+                    <DropdownMenuLabel>
+                      <div className="font-semibold text-sm">
+                        {mockUser.name}
+                      </div>
+                      <div className="text-xs text-muted-foreground font-normal mt-0.5">
+                        {mockUser.email}
+                      </div>
+                      <div className="text-xs text-muted-foreground font-normal">
+                        {activeInstitution.name}
+                      </div>
                     </DropdownMenuLabel>
                     <DropdownMenuSeparator />
-                    {mockUser.institutions.map((institution) => (
-                      <DropdownMenuItem
-                        key={institution.id}
-                        onClick={() => setActiveInstitutionId(institution.id)}
+                    <DropdownMenuItem asChild>
+                      <Link
+                        href="/dashboard/examiner/profile"
                         className="cursor-pointer"
                       >
-                        <div className="flex items-center gap-3 w-full">
-                          <Building2
-                            className={`w-4 h-4 ${
-                              institution.id === activeInstitutionId
-                                ? "text-primary"
-                                : "text-muted-foreground"
-                            }`}
-                          />
-                          <div className="flex-1">
-                            <div className="text-sm font-medium">
-                              {institution.name}
-                            </div>
-                            <div className="text-xs text-muted-foreground">
-                              {institution.role}
-                            </div>
-                          </div>
-                          {institution.id === activeInstitutionId && (
-                            <Check className="w-4 h-4 text-primary" />
-                          )}
-                        </div>
-                      </DropdownMenuItem>
-                    ))}
+                        <User className="w-4 h-4" />
+                        View Profile
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link
+                        href="/dashboard/examiner/settings"
+                        className="cursor-pointer"
+                      >
+                        <Settings className="w-4 h-4" />
+                        Settings
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem
+                      variant="destructive"
+                      onClick={logout}
+                      className="cursor-pointer"
+                    >
+                      <LogOut className="w-4 h-4" />
+                      Log out
+                    </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
-              )}
-            </div>
-            <div className="flex items-center gap-3">
-              {/* Notifications dropdown */}
-              <Notification
-                newNotificationsCount={newNotificationsCount}
-                notifications={mockNotifications}
-              />
-
-              {/* User menu dropdown */}
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <button className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center text-primary font-medium hover:bg-primary/20 transition-colors">
-                    {mockUser.name.charAt(0)}
-                  </button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56">
-                  <DropdownMenuLabel>
-                    <div className="font-semibold text-sm">{mockUser.name}</div>
-                    <div className="text-xs text-muted-foreground font-normal mt-0.5">
-                      {mockUser.email}
-                    </div>
-                    <div className="text-xs text-muted-foreground font-normal">
-                      {activeInstitution.name}
-                    </div>
-                  </DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem asChild>
-                    <Link
-                      href="/dashboard/examiner/profile"
-                      className="cursor-pointer"
-                    >
-                      <User className="w-4 h-4" />
-                      View Profile
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link
-                      href="/dashboard/examiner/settings"
-                      className="cursor-pointer"
-                    >
-                      <Settings className="w-4 h-4" />
-                      Settings
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem
-                    variant="destructive"
-                    onClick={() => {
-                      // Handle logout
-                      window.location.href = "/login";
-                    }}
-                    className="cursor-pointer"
-                  >
-                    <LogOut className="w-4 h-4" />
-                    Log out
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+              </div>
             </div>
           </div>
-        </div>
-      </header>
+        </header>
 
-      {/* Main Content */}
-      <main className="container mx-auto px-6 py-6">{children}</main>
-    </div>
+        {/* Main Content */}
+        <main className="container mx-auto px-6 py-6">{children}</main>
+      </div>
+    </AuthGuard>
   );
 }

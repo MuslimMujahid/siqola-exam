@@ -1,4 +1,19 @@
-import axios from "axios";
+import axios, { AxiosError } from "axios";
+
+// API Error type for type-safe error handling
+export interface ApiErrorResponse {
+  message: string;
+  error?: string;
+  statusCode?: number;
+}
+
+export function isApiError(
+  error: unknown
+): error is AxiosError<ApiErrorResponse> {
+  return (
+    error instanceof Error && "response" in error && "isAxiosError" in error
+  );
+}
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
@@ -33,9 +48,12 @@ apiClient.interceptors.response.use(
       // Handle specific error status codes
       switch (error.response.status) {
         case 401:
-          // Unauthorized - clear token and redirect to login
+          // Unauthorized - only redirect if not already on login page
           localStorage.removeItem("token");
-          if (typeof window !== "undefined") {
+          if (
+            typeof window !== "undefined" &&
+            !window.location.pathname.includes("/login")
+          ) {
             window.location.href = "/login";
           }
           break;

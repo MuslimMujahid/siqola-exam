@@ -1,0 +1,186 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { useForm } from "@tanstack/react-form";
+import { motion } from "framer-motion";
+import { useLogin } from "@/hooks/use-login";
+import { loginSchema, type UserRoleType } from "@/lib/schemas/auth";
+import { RoleSelectionTabs } from "@/components/auth/role-selection-tabs";
+import { BasicError } from "@/components/auth/basic-error";
+import { EmailVerificationError } from "@/components/auth/email-verification-error";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { isApiError } from "@/lib/api/client";
+
+export function LoginForm() {
+  const { login: handleLogin, isLoading, error } = useLogin();
+  const [selectedRole, setSelectedRole] = useState<UserRoleType>("admin");
+
+  const form = useForm({
+    defaultValues: {
+      email: "",
+      password: "",
+      role: "admin" as UserRoleType,
+    },
+    onSubmit: ({ value }) => {
+      handleLogin({
+        email: value.email,
+        password: value.password,
+      });
+    },
+    validators: {
+      onSubmit: loginSchema,
+    },
+  });
+
+  // Update form when role changes
+  useEffect(() => {
+    form.setFieldValue("role", selectedRole);
+  }, [form, selectedRole]);
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, ease: "easeOut", delay: 0.1 }}
+      className="w-full max-w-md"
+    >
+      <Card className="w-full border-border/50 shadow-sm">
+        <CardHeader className="space-y-4 p-6">
+          <div className="space-y-2">
+            <CardTitle className="text-2xl font-semibold tracking-tight">
+              Welcome Back
+            </CardTitle>
+            <CardDescription className="text-muted-foreground">
+              Select your role and enter your credentials
+            </CardDescription>
+          </div>
+
+          <RoleSelectionTabs
+            selectedRole={selectedRole}
+            onRoleChange={setSelectedRole}
+          />
+        </CardHeader>
+        <form
+          noValidate
+          onSubmit={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            form.handleSubmit();
+          }}
+        >
+          <CardContent className="space-y-4 p-6 pt-0">
+            {error &&
+              (isApiError(error) &&
+              error.response?.data?.message?.includes("verify your email") ? (
+                <EmailVerificationError
+                  message={error.response?.data?.message || error.message}
+                  email={form.state.values.email}
+                />
+              ) : (
+                <BasicError
+                  message={
+                    isApiError(error)
+                      ? error.response?.data?.message ||
+                        error.message ||
+                        "Login failed. Please try again."
+                      : "Login failed. Please try again."
+                  }
+                />
+              ))}
+
+            <form.Field name="email">
+              {(field) => (
+                <div className="space-y-2">
+                  <Label htmlFor="email">Email</Label>
+                  <Input
+                    id="email"
+                    name="email"
+                    type="email"
+                    placeholder="institution@example.com"
+                    value={field.state.value}
+                    onChange={(e) => {
+                      field.handleChange(e.target.value);
+                    }}
+                    onBlur={field.handleBlur}
+                    aria-invalid={!!field.state.meta.errors.length}
+                    disabled={isLoading}
+                  />
+                  {!field.state.meta.isValid && (
+                    <p className="text-sm text-destructive">
+                      {field.state.meta.errors?.[0]?.message}
+                    </p>
+                  )}
+                </div>
+              )}
+            </form.Field>
+
+            <form.Field name="password">
+              {(field) => (
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="password">Password</Label>
+                    <Link
+                      href="/reset-password"
+                      className="text-xs text-primary hover:text-primary/80 transition-colors font-medium"
+                    >
+                      Forgot password?
+                    </Link>
+                  </div>
+                  <Input
+                    id="password"
+                    name="password"
+                    type="password"
+                    placeholder="••••••••"
+                    value={field.state.value}
+                    onChange={(e) => {
+                      field.handleChange(e.target.value);
+                    }}
+                    onBlur={field.handleBlur}
+                    aria-invalid={!!field.state.meta.errors.length}
+                    disabled={isLoading}
+                  />
+                  {!field.state.meta.isValid && (
+                    <p className="text-sm text-destructive">
+                      {field.state.meta.errors?.[0]?.message}
+                    </p>
+                  )}
+                </div>
+              )}
+            </form.Field>
+          </CardContent>
+
+          <CardFooter className="flex flex-col space-y-4 p-6 pt-0">
+            <Button
+              type="submit"
+              className="w-full h-10 rounded-md transition-all hover:scale-[1.01] active:scale-[0.99]"
+              disabled={isLoading}
+            >
+              {isLoading ? "Logging in..." : "Login"}
+            </Button>
+
+            <div className="text-center text-sm text-muted-foreground">
+              Don&apos;t have an account?{" "}
+              <Link
+                href="/register"
+                className="text-primary hover:text-primary/80 transition-colors font-medium"
+              >
+                Register here
+              </Link>
+            </div>
+          </CardFooter>
+        </form>
+      </Card>
+    </motion.div>
+  );
+}

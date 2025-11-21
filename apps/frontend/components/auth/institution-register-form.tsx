@@ -2,34 +2,37 @@
 
 import React from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useForm } from "@tanstack/react-form";
 import { useMutation } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { AxiosError } from "axios";
 import { useAuthStore } from "@/store/auth";
 import { institutionRegisterSchema } from "@/lib/schemas/auth";
-import { registerInstitution } from "@/lib/api/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { CardContent, CardFooter } from "@/components/ui/card";
+import { requestRegistrationOtp } from "@/lib/api/auth";
 
 export function InstitutionRegisterForm() {
-  const [registrationSuccess, setRegistrationSuccess] = React.useState(false);
-  const [registeredEmail, setRegisteredEmail] = React.useState("");
-  const { setLoading, setError } = useAuthStore();
+  const router = useRouter();
+  const { setError } = useAuthStore();
 
-  const registerMutation = useMutation({
-    mutationFn: registerInstitution,
-    onSuccess: (data) => {
+  const requestOtpMutation = useMutation({
+    mutationFn: requestRegistrationOtp,
+    onSuccess: (data: {
+      message: string;
+      email: string;
+      expiresAt: string;
+    }) => {
       setError(null);
-      setLoading(false);
-      setRegisteredEmail(data.user.email);
-      setRegistrationSuccess(true);
+      // Redirect to verify page with email in URL
+      router.push(
+        `/verify-registration?email=${encodeURIComponent(data.email)}`
+      );
     },
     onError: (error: AxiosError<{ message: string; error?: string }>) => {
-      setLoading(false);
-      // Handle error from API
       const errorMessage =
         error.response?.data?.message ||
         error.response?.data?.error ||
@@ -48,9 +51,9 @@ export function InstitutionRegisterForm() {
       phoneNumber: "",
     },
     onSubmit: async ({ value }) => {
-      setLoading(true);
       setError(null);
-      registerMutation.mutate({
+      // Request OTP to be sent to the provided email
+      requestOtpMutation.mutate({
         institutionName: value.institutionName,
         email: value.email,
         password: value.password,
@@ -59,73 +62,9 @@ export function InstitutionRegisterForm() {
       });
     },
     validators: {
-      onChange: institutionRegisterSchema,
+      onSubmit: institutionRegisterSchema,
     },
   });
-
-  // Show success message after registration
-  if (registrationSuccess) {
-    return (
-      <>
-        <CardContent className="space-y-4 p-6 pt-0">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="rounded-lg bg-primary/10 border border-primary/20 p-6 space-y-4"
-          >
-            <div className="flex items-start gap-3">
-              <div className="rounded-lg bg-primary/20 p-2 mt-0.5">
-                <svg
-                  className="w-6 h-6 text-primary"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
-                </svg>
-              </div>
-              <div className="space-y-2 flex-1">
-                <h3 className="font-semibold text-lg">
-                  Registration Successful!
-                </h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">
-                  We&apos;ve sent a verification email to{" "}
-                  <span className="font-medium text-foreground">
-                    {registeredEmail}
-                  </span>
-                  . Please check your inbox and click the verification link to
-                  activate your account.
-                </p>
-                <div className="pt-2 space-y-1">
-                  <p className="text-xs text-muted-foreground">
-                    • Check your spam folder if you don&apos;t see the email
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    • The verification link will expire in 24 hours
-                  </p>
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        </CardContent>
-        <CardFooter className="flex flex-col space-y-4 p-6 pt-0">
-          <Link href="/login" className="w-full">
-            <Button
-              type="button"
-              className="w-full h-10 rounded-md transition-all hover:scale-[1.01] active:scale-[0.99]"
-            >
-              Go to Login
-            </Button>
-          </Link>
-        </CardFooter>
-      </>
-    );
-  }
 
   return (
     <form
@@ -161,7 +100,7 @@ export function InstitutionRegisterForm() {
                 }}
                 onBlur={field.handleBlur}
                 aria-invalid={!!field.state.meta.errors.length}
-                disabled={registerMutation.isPending}
+                disabled={requestOtpMutation.isPending}
               />
               {!field.state.meta.isValid && (
                 <p className="text-sm text-destructive">
@@ -187,7 +126,7 @@ export function InstitutionRegisterForm() {
                 }}
                 onBlur={field.handleBlur}
                 aria-invalid={!!field.state.meta.errors.length}
-                disabled={registerMutation.isPending}
+                disabled={requestOtpMutation.isPending}
               />
               {!field.state.meta.isValid && (
                 <p className="text-sm text-destructive">
@@ -213,7 +152,7 @@ export function InstitutionRegisterForm() {
                 }}
                 onBlur={field.handleBlur}
                 aria-invalid={!!field.state.meta.errors.length}
-                disabled={registerMutation.isPending}
+                disabled={requestOtpMutation.isPending}
               />
               {!field.state.meta.isValid && (
                 <p className="text-sm text-destructive">
@@ -239,7 +178,7 @@ export function InstitutionRegisterForm() {
                 }}
                 onBlur={field.handleBlur}
                 aria-invalid={!!field.state.meta.errors.length}
-                disabled={registerMutation.isPending}
+                disabled={requestOtpMutation.isPending}
               />
               {!field.state.meta.isValid && (
                 <p className="text-sm text-destructive">
@@ -265,7 +204,7 @@ export function InstitutionRegisterForm() {
                 }}
                 onBlur={field.handleBlur}
                 aria-invalid={!!field.state.meta.errors.length}
-                disabled={registerMutation.isPending}
+                disabled={requestOtpMutation.isPending}
               />
               {!field.state.meta.isValid && (
                 <p className="text-sm text-destructive">
@@ -291,7 +230,7 @@ export function InstitutionRegisterForm() {
                 }}
                 onBlur={field.handleBlur}
                 aria-invalid={!!field.state.meta.errors.length}
-                disabled={registerMutation.isPending}
+                disabled={requestOtpMutation.isPending}
               />
               {!field.state.meta.isValid && (
                 <p className="text-sm text-destructive">
@@ -307,9 +246,9 @@ export function InstitutionRegisterForm() {
         <Button
           type="submit"
           className="w-full h-10 rounded-md transition-all hover:scale-[1.01] active:scale-[0.99]"
-          disabled={registerMutation.isPending}
+          disabled={requestOtpMutation.isPending}
         >
-          {registerMutation.isPending ? "Creating Account..." : "Register"}
+          {requestOtpMutation.isPending ? "Sending OTP..." : "Register"}
         </Button>
 
         <div className="text-center text-sm text-muted-foreground">

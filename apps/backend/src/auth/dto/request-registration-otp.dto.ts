@@ -1,15 +1,13 @@
-import { IsEmail, IsString, MinLength } from 'class-validator';
+import { IsEmail, IsString } from 'class-validator';
 
-export class RegisterInstitutionDto {
+export class RequestRegistrationOtpDto {
   @IsString()
-  @MinLength(2)
   institutionName: string;
 
   @IsEmail()
   email: string;
 
   @IsString()
-  @MinLength(8)
   password: string;
 
   @IsString()

@@ -4,6 +4,7 @@ import React from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { type UserRoleType } from "@/lib/schemas/auth";
+import { RoleSelectionTabs } from "@/components/auth/role-selection-tabs";
 import {
   Card,
   CardContent,
@@ -14,8 +15,7 @@ import {
 import { InstitutionRegisterForm } from "@/components/auth/institution-register-form";
 
 export default function RegisterPage() {
-  const [selectedRole, setSelectedRole] =
-    React.useState<UserRoleType>("institution");
+  const [selectedRole, setSelectedRole] = React.useState<UserRoleType>("admin");
 
   return (
     <div className="grid min-h-screen lg:grid-cols-2">
@@ -131,45 +131,18 @@ export default function RegisterPage() {
                 </CardDescription>
               </div>
 
-              {/* Role Selection Tabs */}
-              <div className="grid grid-cols-3 gap-2 p-1 bg-muted/50 rounded-lg">
-                <button
-                  type="button"
-                  onClick={() => setSelectedRole("institution")}
-                  className={`px-3 py-2 text-sm font-medium rounded-md transition-all ${
-                    selectedRole === "institution"
-                      ? "bg-background text-foreground shadow-sm"
-                      : "text-muted-foreground hover:text-foreground"
-                  }`}
-                >
-                  Institution
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setSelectedRole("examiner")}
-                  className={`px-3 py-2 text-sm font-medium rounded-md transition-all ${
-                    selectedRole === "examiner"
-                      ? "bg-background text-foreground shadow-sm"
-                      : "text-muted-foreground hover:text-foreground"
-                  }`}
-                >
-                  Examiner
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setSelectedRole("examinee")}
-                  className={`px-3 py-2 text-sm font-medium rounded-md transition-all ${
-                    selectedRole === "examinee"
-                      ? "bg-background text-foreground shadow-sm"
-                      : "text-muted-foreground hover:text-foreground"
-                  }`}
-                >
-                  Examinee
-                </button>
-              </div>
+              <RoleSelectionTabs
+                selectedRole={selectedRole}
+                onRoleChange={setSelectedRole}
+                roles={[
+                  { value: "admin", label: "Admin" },
+                  { value: "examiner", label: "Examiner" },
+                  { value: "examinee", label: "Examinee" },
+                ]}
+              />
             </CardHeader>
 
-            {selectedRole === "institution" ? (
+            {selectedRole === "admin" ? (
               <InstitutionRegisterForm />
             ) : (
               <CardContent className="space-y-4 p-6 pt-0">
