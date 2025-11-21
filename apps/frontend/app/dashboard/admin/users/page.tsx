@@ -152,22 +152,22 @@ export default function UserManagementPage() {
       {/* Page Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold tracking-tight">User Management</h2>
+          <h2 className="text-2xl font-bold tracking-tight">Kelola Pengguna</h2>
           <p className="text-muted-foreground mt-1">
-            View and manage all users in your institution
+            Lihat dan kelola semua pengguna di institusi Anda
           </p>
         </div>
         <div className="flex gap-2">
           <Button asChild>
             <Link href="/dashboard/admin/users/add-examiner">
               <UserPlus className="w-4 h-4 mr-2" />
-              Add Examiner
+              Tambah Penguji
             </Link>
           </Button>
           <Button variant="outline" asChild>
             <Link href="/dashboard/admin/users/add-examinee">
               <UserPlus className="w-4 h-4 mr-2" />
-              Add Examinee
+              Tambah Peserta
             </Link>
           </Button>
         </div>
@@ -183,10 +183,10 @@ export default function UserManagementPage() {
             <Tabs value={activeTab} onValueChange={handleTabChange}>
               <TabsList className="mb-4">
                 <TabsTrigger value="examiners">
-                  Examiners ({filteredExaminers.length})
+                  Penguji ({filteredExaminers.length})
                 </TabsTrigger>
                 <TabsTrigger value="examinees">
-                  Examinees ({filteredExaminees.length})
+                  Peserta ({filteredExaminees.length})
                 </TabsTrigger>
               </TabsList>
 
@@ -196,7 +196,7 @@ export default function UserManagementPage() {
                   <div className="relative">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                     <Input
-                      placeholder="Search by name or email..."
+                      placeholder="Cari berdasarkan nama atau email..."
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
                       className="pl-9"
@@ -208,10 +208,10 @@ export default function UserManagementPage() {
                     <SelectValue placeholder="Status" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">All Status</SelectItem>
-                    <SelectItem value="active">Active</SelectItem>
-                    <SelectItem value="suspended">Suspended</SelectItem>
-                    <SelectItem value="pending">Pending</SelectItem>
+                    <SelectItem value="all">Semua Status</SelectItem>
+                    <SelectItem value="active">Aktif</SelectItem>
+                    <SelectItem value="suspended">Ditangguhkan</SelectItem>
+                    <SelectItem value="pending">Menunggu</SelectItem>
                   </SelectContent>
                 </Select>
                 {activeTab === "examinees" && (
@@ -220,7 +220,7 @@ export default function UserManagementPage() {
                       <SelectValue placeholder="Group" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">All Groups</SelectItem>
+                      <SelectItem value="all">Semua Grup</SelectItem>
                       {allGroups.map((group) => (
                         <SelectItem key={group} value={group}>
                           {group}
@@ -235,12 +235,12 @@ export default function UserManagementPage() {
                 {paginatedUsers.length === 0 ? (
                   <div className="text-center py-12">
                     <p className="text-muted-foreground mb-4">
-                      No examiners found. Add an examiner to get started.
+                      Penguji tidak ditemukan. Tambahkan penguji untuk memulai.
                     </p>
                     <Button asChild>
                       <Link href="/dashboard/admin/users/add-examiner">
                         <UserPlus className="w-4 h-4 mr-2" />
-                        Add Examiner
+                        Tambah Penguji
                       </Link>
                     </Button>
                   </div>
@@ -262,12 +262,12 @@ export default function UserManagementPage() {
                 {paginatedUsers.length === 0 ? (
                   <div className="text-center py-12">
                     <p className="text-muted-foreground mb-4">
-                      No examinees found. Add an examinee to get started.
+                      Peserta tidak ditemukan. Tambahkan peserta untuk memulai.
                     </p>
                     <Button asChild>
                       <Link href="/dashboard/admin/users/add-examinee">
                         <UserPlus className="w-4 h-4 mr-2" />
-                        Add Examinee
+                        Tambah Peserta
                       </Link>
                     </Button>
                   </div>

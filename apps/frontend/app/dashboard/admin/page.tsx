@@ -4,15 +4,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import {
   Users,
   UserPlus,
   FileText,
@@ -23,6 +14,16 @@ import {
   AlertCircle,
   Clock,
 } from "lucide-react";
+
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 
 // Mock data - replace with actual API calls
 const mockStats = {
@@ -39,7 +40,7 @@ const mockRecentUsers = [
     email: "sarah.j@university.edu",
     role: "Examiner",
     status: "active",
-    addedAt: "2 hours ago",
+    addedAt: "2 jam yang lalu",
   },
   {
     id: 2,
@@ -47,7 +48,7 @@ const mockRecentUsers = [
     email: "m.chen@university.edu",
     role: "Examinee",
     status: "active",
-    addedAt: "5 hours ago",
+    addedAt: "5 jam yang lalu",
   },
   {
     id: 3,
@@ -55,7 +56,7 @@ const mockRecentUsers = [
     email: "emily.d@university.edu",
     role: "Examinee",
     status: "active",
-    addedAt: "1 day ago",
+    addedAt: "1 hari yang lalu",
   },
   {
     id: 4,
@@ -63,7 +64,7 @@ const mockRecentUsers = [
     email: "r.wilson@university.edu",
     role: "Examiner",
     status: "suspended",
-    addedAt: "2 days ago",
+    addedAt: "2 hari yang lalu",
   },
   {
     id: 5,
@@ -71,7 +72,7 @@ const mockRecentUsers = [
     email: "j.martinez@university.edu",
     role: "Examinee",
     status: "active",
-    addedAt: "3 days ago",
+    addedAt: "3 hari yang lalu",
   },
 ];
 
@@ -79,50 +80,50 @@ const mockRecentActivity = [
   {
     id: 1,
     type: "exam_created",
-    message: "Dr. Smith created an exam: Advanced Calculus Final",
-    time: "10 minutes ago",
+    message: "Dr. Smith membuat ujian baru: Ujian Matematika Akhir",
+    time: "10 menit yang lalu",
     icon: FileText,
   },
   {
     id: 2,
     type: "submission",
-    message: "Sarah Johnson submitted Physics Midterm",
-    time: "25 minutes ago",
+    message: "Sarah Johnson mengumpulkan Ujian Fisika Tengah Semester",
+    time: "25 menit yang lalu",
     icon: CheckCircle,
   },
   {
     id: 3,
     type: "user_added",
     message: "New examiner added: Dr. Michael Brown",
-    time: "1 hour ago",
+    time: "1 jam yang lalu",
     icon: UserPlus,
   },
   {
     id: 4,
     type: "exam_published",
-    message: "Chemistry Quiz was published by Prof. Lee",
-    time: "2 hours ago",
+    message: "Kuis Kimia dipublikasikan oleh Prof. Lee",
+    time: "2 jam yang lalu",
     icon: FileText,
   },
   {
     id: 5,
     type: "exam_opened",
-    message: "Mathematics Midterm exam window opened",
-    time: "3 hours ago",
+    message: "UTS Matematika dimulai",
+    time: "3 jam yang lalu",
     icon: Activity,
   },
   {
     id: 6,
     type: "submission",
-    message: "John Doe submitted Biology Assignment",
-    time: "4 hours ago",
+    message: "John Doe mengumpulkan Tugas Biologi",
+    time: "4 jam yang lalu",
     icon: CheckCircle,
   },
   {
     id: 7,
     type: "exam_closed",
-    message: "English Literature exam window closed",
-    time: "5 hours ago",
+    message: "Ujian literatur bahasa Inggris ditutup",
+    time: "5 jam yang lalu",
     icon: Clock,
   },
 ];
@@ -131,31 +132,31 @@ const mockSystemNotifications = [
   {
     id: 1,
     type: "success",
-    message: "User invited successfully",
-    time: "5 minutes ago",
+    message: "Pengguna berhasil diundang",
+    time: "5 menit yang lalu",
   },
   {
     id: 2,
     type: "info",
-    message: "Dr. Smith created a new exam: Physics Final",
-    time: "30 minutes ago",
+    message: "Dr. Smith membuat ujian baru: Ujian Fisika Akhir",
+    time: "30 menit yang lalu",
   },
   {
     id: 3,
     type: "warning",
-    message: "There are 12 submissions awaiting grading",
-    time: "1 hour ago",
+    message: "Ada 12 pengumpulan yang menunggu penilaian",
+    time: "1 jam yang lalu",
   },
   {
     id: 4,
     type: "reminder",
-    message: "Mathematics Midterm starting in 2 hours",
-    time: "2 hours ago",
+    message: "UTS Matematika dimulai dalam 2 jam",
+    time: "2 jam yang lalu",
   },
 ];
 
 const mockInstitution = {
-  name: "ABC University",
+  name: "Universitas ABC",
   logo: null,
   adminName: "Admin John Doe",
   adminEmail: "admin@university.edu",
@@ -167,10 +168,10 @@ export default function AdminDashboard() {
       {/* Page Header */}
       <div>
         <h2 className="text-2xl font-bold tracking-tight">
-          Institution Dashboard
+          Dashboard Institusi
         </h2>
         <p className="text-muted-foreground mt-1">
-          Manage your institution, users, and monitor activities
+          Kelola institusi Anda, pengguna, dan pantau aktivitas
         </p>
       </div>
 
@@ -194,7 +195,7 @@ export default function AdminDashboard() {
                       <p className="text-2xl font-bold">
                         {mockStats.totalExaminers}
                       </p>
-                      <p className="text-xs text-muted-foreground">Examiners</p>
+                      <p className="text-xs text-muted-foreground">Penguji</p>
                     </div>
                   </div>
                 </CardContent>
@@ -216,7 +217,7 @@ export default function AdminDashboard() {
                       <p className="text-2xl font-bold">
                         {mockStats.totalExaminees}
                       </p>
-                      <p className="text-xs text-muted-foreground">Examinees</p>
+                      <p className="text-xs text-muted-foreground">Peserta</p>
                     </div>
                   </div>
                 </CardContent>
@@ -239,7 +240,7 @@ export default function AdminDashboard() {
                         {mockStats.totalExams}
                       </p>
                       <p className="text-xs text-muted-foreground">
-                        Total Exams
+                        Total Ujian
                       </p>
                     </div>
                   </div>
@@ -263,7 +264,7 @@ export default function AdminDashboard() {
                         {mockStats.activeExams}
                       </p>
                       <p className="text-xs text-muted-foreground">
-                        Active Now
+                        Aktif Sekarang
                       </p>
                     </div>
                   </div>
@@ -282,13 +283,13 @@ export default function AdminDashboard() {
             <Button asChild>
               <Link href="/dashboard/admin/users/add-examiner">
                 <UserPlus className="w-4 h-4 mr-2" />
-                Add Examiner
+                Tambah Penguji
               </Link>
             </Button>
             <Button variant="outline" asChild>
               <Link href="/dashboard/admin/users/add-examinee">
                 <UserPlus className="w-4 h-4 mr-2" />
-                Add Examinee
+                Tambah Peserta
               </Link>
             </Button>
           </motion.div>
@@ -303,8 +304,10 @@ export default function AdminDashboard() {
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <div>
-                    <CardTitle>User Management Overview</CardTitle>
-                    <CardDescription>Recently added users</CardDescription>
+                    <CardTitle>Manajemen Pengguna</CardTitle>
+                    <CardDescription>
+                      Pengguna yang baru ditambahkan
+                    </CardDescription>
                   </div>
                 </div>
               </CardHeader>
@@ -355,7 +358,9 @@ export default function AdminDashboard() {
                   className="w-full text-sm text-muted-foreground hover:text-foreground"
                   asChild
                 >
-                  <Link href="/dashboard/admin/users">View All Users</Link>
+                  <Link href="/dashboard/admin/users">
+                    Lihat Semua Pengguna
+                  </Link>
                 </Button>
               </div>
             </Card>
@@ -369,9 +374,9 @@ export default function AdminDashboard() {
           >
             <Card className="border-border/50">
               <CardHeader>
-                <CardTitle>Recent Activity</CardTitle>
+                <CardTitle>Aktivitas Terbaru</CardTitle>
                 <CardDescription>
-                  Latest events in your institution
+                  Peristiwa terbaru di institusi Anda
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-3">
@@ -402,7 +407,7 @@ export default function AdminDashboard() {
                   asChild
                 >
                   <Link href="/dashboard/admin/activity">
-                    View Full Activity Log
+                    Lihat Semua Log Aktivitas
                   </Link>
                 </Button>
               </div>
@@ -420,7 +425,7 @@ export default function AdminDashboard() {
           >
             <Card className="border-border/50">
               <CardHeader className="pb-3">
-                <CardTitle className="text-base">Institution Profile</CardTitle>
+                <CardTitle className="text-base">Profil Institusi</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex items-center gap-3">
@@ -440,7 +445,7 @@ export default function AdminDashboard() {
                   <div className="flex-1">
                     <h3 className="font-semibold">{mockInstitution.name}</h3>
                     <p className="text-xs text-muted-foreground mt-0.5">
-                      Educational Institution
+                      Institusi Pendidikan
                     </p>
                   </div>
                 </div>
@@ -463,7 +468,7 @@ export default function AdminDashboard() {
                 <Button variant="outline" className="w-full" asChild>
                   <Link href="/dashboard/admin/settings">
                     <Settings className="w-4 h-4 mr-2" />
-                    Manage Institution
+                    Kelola Institusi
                   </Link>
                 </Button>
               </CardContent>
@@ -478,9 +483,7 @@ export default function AdminDashboard() {
           >
             <Card className="border-border/50">
               <CardHeader className="pb-3">
-                <CardTitle className="text-base">
-                  System Notifications
-                </CardTitle>
+                <CardTitle className="text-base">Notifikasi</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
                 {mockSystemNotifications.map((notification) => {

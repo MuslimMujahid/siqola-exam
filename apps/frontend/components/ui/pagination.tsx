@@ -33,7 +33,7 @@ export function Pagination({
   return (
     <div className="flex items-center justify-between">
       <p className="text-sm text-muted-foreground">
-        Showing {startItem} to {endItem} of {totalItems} results
+        Menampilkan {startItem} - {endItem} dari {totalItems} hasil
       </p>
       <div className="flex items-center gap-2">
         <Button
@@ -43,7 +43,6 @@ export function Pagination({
           disabled={currentPage === 1}
         >
           <ChevronLeft className="w-4 h-4 mr-1" />
-          Previous
         </Button>
         <div className="flex items-center gap-1">
           {getPageNumbers().map((page) => (
@@ -64,7 +63,6 @@ export function Pagination({
           onClick={() => onPageChange(Math.min(totalPages, currentPage + 1))}
           disabled={currentPage === totalPages}
         >
-          Next
           <ChevronRight className="w-4 h-4 ml-1" />
         </Button>
       </div>

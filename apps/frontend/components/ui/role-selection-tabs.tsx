@@ -8,8 +8,8 @@ interface RoleSelectionTabsProps {
 
 const DEFAULT_ROLES = [
   { value: "admin" as UserRoleType, label: "Admin" },
-  { value: "examiner" as UserRoleType, label: "Examiner" },
-  { value: "examinee" as UserRoleType, label: "Examinee" },
+  { value: "examiner" as UserRoleType, label: "Penguji" },
+  { value: "examinee" as UserRoleType, label: "Peserta" },
 ];
 
 export function RoleSelectionTabs({

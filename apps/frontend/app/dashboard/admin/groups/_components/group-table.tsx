@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { MoreVertical, Eye, Edit, Trash2 } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -15,7 +17,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { MoreVertical, Eye, Edit, Trash2 } from "lucide-react";
 
 interface Group {
   id: number;
@@ -35,10 +36,10 @@ export function GroupTable({ groups }: GroupTableProps) {
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Name</TableHead>
-            <TableHead>Description</TableHead>
-            <TableHead className="text-center">Members</TableHead>
-            <TableHead className="w-[70px]">Actions</TableHead>
+            <TableHead>Nama</TableHead>
+            <TableHead>Deskripsi</TableHead>
+            <TableHead className="text-center">Anggota</TableHead>
+            <TableHead className="w-[70px]">Aksi</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -67,7 +68,7 @@ export function GroupTable({ groups }: GroupTableProps) {
                         className="cursor-pointer"
                       >
                         <Eye className="w-4 h-4 mr-2" />
-                        View Group
+                        Lihat Grup
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
@@ -76,7 +77,7 @@ export function GroupTable({ groups }: GroupTableProps) {
                         className="cursor-pointer"
                       >
                         <Edit className="w-4 h-4 mr-2" />
-                        Edit Group
+                        Edit Grup
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
@@ -85,7 +86,7 @@ export function GroupTable({ groups }: GroupTableProps) {
                       className="cursor-pointer"
                     >
                       <Trash2 className="w-4 h-4 mr-2" />
-                      Delete
+                      Hapus
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>

@@ -1,4 +1,13 @@
 import Link from "next/link";
+import {
+  MoreVertical,
+  Eye,
+  Edit,
+  Ban,
+  CheckCircle,
+  Trash2,
+} from "lucide-react";
+
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -16,14 +25,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  MoreVertical,
-  Eye,
-  Edit,
-  Ban,
-  CheckCircle,
-  Trash2,
-} from "lucide-react";
 
 interface User {
   id: number;
@@ -49,14 +50,14 @@ export function UserTable({ users, showGroups = true }: UserTableProps) {
             className="bg-green-500/10 text-green-600 hover:bg-green-500/20"
           >
             <CheckCircle className="w-3 h-3 mr-1" />
-            Active
+            Aktif
           </Badge>
         );
       case "suspended":
         return (
           <Badge variant="destructive">
             <Ban className="w-3 h-3 mr-1" />
-            Suspended
+            Ditangguhkan
           </Badge>
         );
       case "pending":
@@ -66,7 +67,7 @@ export function UserTable({ users, showGroups = true }: UserTableProps) {
             className="bg-yellow-500/10 text-yellow-600 hover:bg-yellow-500/20"
           >
             <CheckCircle className="w-3 h-3 mr-1" />
-            Pending
+            Menunggu
           </Badge>
         );
       default:
@@ -79,12 +80,12 @@ export function UserTable({ users, showGroups = true }: UserTableProps) {
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Name</TableHead>
+            <TableHead>Nama</TableHead>
             <TableHead>Email</TableHead>
-            {showGroups && <TableHead>Groups</TableHead>}
+            {showGroups && <TableHead>Grup</TableHead>}
             <TableHead>Status</TableHead>
-            <TableHead>Created</TableHead>
-            <TableHead className="w-[70px]">Actions</TableHead>
+            <TableHead>Dibuat</TableHead>
+            <TableHead className="w-[70px]">Aksi</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -127,7 +128,7 @@ export function UserTable({ users, showGroups = true }: UserTableProps) {
                         className="cursor-pointer"
                       >
                         <Eye className="w-4 h-4 mr-2" />
-                        View User
+                        Lihat Pengguna
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
@@ -136,7 +137,7 @@ export function UserTable({ users, showGroups = true }: UserTableProps) {
                         className="cursor-pointer"
                       >
                         <Edit className="w-4 h-4 mr-2" />
-                        Edit User
+                        Edit Pengguna
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
@@ -144,12 +145,12 @@ export function UserTable({ users, showGroups = true }: UserTableProps) {
                       {user.status === "suspended" ? (
                         <>
                           <CheckCircle className="w-4 h-4 mr-2" />
-                          Activate
+                          Aktifkan
                         </>
                       ) : (
                         <>
                           <Ban className="w-4 h-4 mr-2" />
-                          Suspend
+                          Tangguhkan
                         </>
                       )}
                     </DropdownMenuItem>
@@ -158,7 +159,7 @@ export function UserTable({ users, showGroups = true }: UserTableProps) {
                       className="cursor-pointer"
                     >
                       <Trash2 className="w-4 h-4 mr-2" />
-                      Remove
+                      Hapus
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>

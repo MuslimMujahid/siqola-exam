@@ -9,6 +9,11 @@ This is a **Turborepo monorepo** both frontend and backend for an online exam pl
 - **Frontend**: Built with Next.js and TypeScript, located in the `apps/frontend` directory.
 - **Backend**: Built with Node.js and Express, located in the `apps/backend` directory.
 - **Shared Code**: Common utilities and types are located in the `packages` directory.
+- **Package Manager**: pnpm
+- **Monorepo Tool**: Turborepo
+- **Database**: PostgreSQL
+- **ORM**: Prisma
+- **Language**: The contents will mainly be in Indonesian, but code comments and documentation should be in English.
 
 ## Command Line Instructions
 

@@ -61,10 +61,10 @@ export function LoginForm() {
         <CardHeader className="space-y-4 p-6">
           <div className="space-y-2">
             <CardTitle className="text-2xl font-semibold tracking-tight">
-              Welcome Back
+              Selamat Datang
             </CardTitle>
             <CardDescription className="text-muted-foreground">
-              Select your role and enter your credentials
+              Pilih peran Anda dan masukkan kredensial
             </CardDescription>
           </div>
 
@@ -126,12 +126,12 @@ export function LoginForm() {
               {(field) => (
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <Label htmlFor="password">Password</Label>
+                    <Label htmlFor="password">Kata Sandi</Label>
                     <Link
                       href="/reset-password"
                       className="text-xs text-primary hover:text-primary/80 transition-colors font-medium"
                     >
-                      Forgot password?
+                      Lupa kata sandi?
                     </Link>
                   </div>
                   <Input
@@ -163,16 +163,16 @@ export function LoginForm() {
               className="w-full h-10 rounded-md transition-all hover:scale-[1.01] active:scale-[0.99]"
               disabled={isLoading}
             >
-              {isLoading ? "Logging in..." : "Login"}
+              {isLoading ? "Masuk..." : "Masuk"}
             </Button>
 
             <div className="text-center text-sm text-muted-foreground">
-              Don&apos;t have an account?{" "}
+              Belum punya akun?{" "}
               <Link
                 href="/register"
                 className="text-primary hover:text-primary/80 transition-colors font-medium"
               >
-                Register here
+                Daftar di sini
               </Link>
             </div>
           </CardFooter>

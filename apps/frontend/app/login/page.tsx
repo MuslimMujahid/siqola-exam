@@ -35,8 +35,7 @@ export default function LoginPage() {
               SiqolaExam
             </h2>
             <p className="text-lg text-muted-foreground">
-              Sign in to access your institution&apos;s exam management
-              platform.
+              Masuk untuk mengakses platform manajemen ujian anda
             </p>
           </div>
 
@@ -58,9 +57,9 @@ export default function LoginPage() {
                 </svg>
               </div>
               <div>
-                <h3 className="font-medium">Secure & Reliable</h3>
+                <h3 className="font-medium">Mudah Digunakan</h3>
                 <p className="text-sm text-muted-foreground">
-                  Your data is protected with enterprise-grade security.
+                  Platform kami dirancang untuk kemudahan penggunaan
                 </p>
               </div>
             </div>
@@ -82,9 +81,10 @@ export default function LoginPage() {
                 </svg>
               </div>
               <div>
-                <h3 className="font-medium">Fast & Efficient</h3>
+                <h3 className="font-medium">Cepat & Efisien</h3>
                 <p className="text-sm text-muted-foreground">
-                  Streamlined exam management for better productivity.
+                  Manajemen ujian yang efisien untuk produktivitas yang lebih
+                  baik.
                 </p>
               </div>
             </div>
@@ -106,9 +106,9 @@ export default function LoginPage() {
                 </svg>
               </div>
               <div>
-                <h3 className="font-medium">Collaborative</h3>
+                <h3 className="font-medium">Kolaboratif</h3>
                 <p className="text-sm text-muted-foreground">
-                  Work seamlessly with your team and students.
+                  Bekerja dengan lancar bersama tim dan siswa Anda.
                 </p>
               </div>
             </div>

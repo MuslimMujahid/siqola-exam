@@ -4,6 +4,7 @@ import React from "react";
 
 import Link from "next/link";
 import { motion } from "framer-motion";
+import { SlidersHorizontal, Info } from "lucide-react";
 
 import { type UserRoleType } from "@/lib/schemas/auth";
 import { RoleSelectionTabs } from "@/components/ui/role-selection-tabs";
@@ -34,79 +35,19 @@ export default function RegisterPage() {
               SiqolaExam
             </h2>
             <p className="text-lg text-muted-foreground">
-              Join our family and we&apos;ll help you manage exams with ease.
+              Bergabung bersama kami dan mulai kelola ujian Anda dengan mudah
             </p>
           </div>
 
           <div className="space-y-4 pt-4">
             <div className="flex items-start gap-3">
               <div className="rounded-lg bg-primary/10 p-2 mt-1">
-                <svg
-                  className="w-5 h-5 text-primary"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"
-                  />
-                </svg>
+                <SlidersHorizontal className="w-5 h-5 text-primary" />
               </div>
               <div>
-                <h3 className="font-medium">Easy Setup</h3>
+                <h3 className="font-medium">Pengaturan Mudah</h3>
                 <p className="text-sm text-muted-foreground">
-                  Get up and running in minutes with our intuitive platform.
-                </p>
-              </div>
-            </div>
-
-            <div className="flex items-start gap-3">
-              <div className="rounded-lg bg-primary/10 p-2 mt-1">
-                <svg
-                  className="w-5 h-5 text-primary"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
-                  />
-                </svg>
-              </div>
-              <div>
-                <h3 className="font-medium">Powerful Analytics</h3>
-                <p className="text-sm text-muted-foreground">
-                  Track performance and gain insights with detailed reports.
-                </p>
-              </div>
-            </div>
-
-            <div className="flex items-start gap-3">
-              <div className="rounded-lg bg-primary/10 p-2 mt-1">
-                <svg
-                  className="w-5 h-5 text-primary"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"
-                  />
-                </svg>
-              </div>
-              <div>
-                <h3 className="font-medium">24/7 Support</h3>
-                <p className="text-sm text-muted-foreground">
-                  Our team is always here to help you succeed.
+                  Mulai dalam hitungan menit dengan platform intuitif kami.
                 </p>
               </div>
             </div>
@@ -126,21 +67,16 @@ export default function RegisterPage() {
             <CardHeader className="space-y-4 p-6">
               <div className="space-y-2">
                 <CardTitle className="text-2xl font-semibold tracking-tight">
-                  Create Account
+                  Buat Akun Baru
                 </CardTitle>
                 <CardDescription className="text-muted-foreground">
-                  Select your role to get started
+                  Pilih peran Anda dan isi detail pendaftaran
                 </CardDescription>
               </div>
 
               <RoleSelectionTabs
                 selectedRole={selectedRole}
                 onRoleChange={setSelectedRole}
-                roles={[
-                  { value: "admin", label: "Admin" },
-                  { value: "examiner", label: "Examiner" },
-                  { value: "examinee", label: "Examinee" },
-                ]}
               />
             </CardHeader>
 
@@ -155,42 +91,30 @@ export default function RegisterPage() {
                 >
                   <div className="flex items-start gap-3">
                     <div className="rounded-lg bg-primary/10 p-2 mt-0.5">
-                      <svg
-                        className="w-5 h-5 text-primary"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                        />
-                      </svg>
+                      <Info className="w-5 h-5 text-primary" />
                     </div>
                     <div className="space-y-2">
                       <h3 className="font-semibold">
                         {selectedRole === "examiner"
-                          ? "Examiner Account Request"
-                          : "Examinee Account Request"}
+                          ? "Permintaan Akun Penguji"
+                          : "Permintaan Akun Peserta"}
                       </h3>
                       <p className="text-sm text-muted-foreground leading-relaxed">
                         {selectedRole === "examiner"
-                          ? "Examiner accounts are created by institutions. Please contact your institution administrator to request an examiner account."
-                          : "Examinee accounts are created by institutions. Please contact your institution administrator to request an examinee account."}
+                          ? "Akun Penguji dibuat oleh institusi. Silakan hubungi administrator institusi Anda untuk mendapatkan akses."
+                          : "Akun Peserta dibuat oleh institusi. Silakan hubungi administrator institusi Anda untuk mendapatkan akses."}
                       </p>
                     </div>
                   </div>
                 </motion.div>
 
                 <div className="text-center text-sm text-muted-foreground pt-2">
-                  Already have an account?{" "}
+                  Sudah punya akun?{" "}
                   <Link
                     href="/login"
                     className="text-primary hover:text-primary/80 transition-colors font-medium"
                   >
-                    Login here
+                    Masuk di sini
                   </Link>
                 </div>
               </CardContent>

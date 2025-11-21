@@ -48,13 +48,13 @@ const generateMockGroups = () => {
 
       let description = "";
       if (type.prefix === "Class") {
-        description = `Students enrolled in Class ${suffix}`;
+        description = `Peserta kelas ${suffix}`;
       } else if (type.prefix === "Year") {
-        description = `All students in their ${suffix}${suffix === "1" ? "st" : suffix === "2" ? "nd" : suffix === "3" ? "rd" : "th"} year`;
+        description = `Semua peserta di tahun ke-${suffix}`;
       } else if (type.prefix === "Department") {
-        description = `Faculty and students in ${suffix} department`;
+        description = `Fakultas dan peserta di departemen ${suffix}`;
       } else if (type.prefix === "Lab") {
-        description = `Laboratory group ${suffix} for practical sessions`;
+        description = `Grup laboratorium ${suffix} untuk sesi praktikum`;
       }
 
       groups.push({
@@ -99,17 +99,15 @@ export default function GroupManagementPage() {
       {/* Page Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold tracking-tight">
-            Group Management
-          </h2>
+          <h2 className="text-2xl font-bold tracking-tight">Kelola Grup</h2>
           <p className="text-muted-foreground mt-1">
-            Create and manage groups for organizing users
+            Buat dan kelola grup untuk mengorganisir pengguna
           </p>
         </div>
         <Button asChild>
           <Link href="/dashboard/admin/groups/create">
             <UserCog className="w-4 h-4 mr-2" />
-            Create Group
+            Buat Grup
           </Link>
         </Button>
       </div>
@@ -127,7 +125,7 @@ export default function GroupManagementPage() {
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                   <Input
-                    placeholder="Search groups..."
+                    placeholder="Cari grup berdasarkan nama..."
                     value={searchQuery}
                     onChange={(e) => {
                       setSearchQuery(e.target.value);
@@ -142,12 +140,12 @@ export default function GroupManagementPage() {
             {paginatedGroups.length === 0 ? (
               <div className="text-center py-12">
                 <p className="text-muted-foreground mb-4">
-                  No groups found. Create a group to get started.
+                  Tidak ada grup yang ditemukan. Buat grup untuk memulai.
                 </p>
                 <Button asChild>
                   <Link href="/dashboard/admin/groups/create">
                     <UserCog className="w-4 h-4 mr-2" />
-                    Create Group
+                    Buat Grup
                   </Link>
                 </Button>
               </div>

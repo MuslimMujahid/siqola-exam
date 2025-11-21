@@ -31,30 +31,30 @@ import { Notification } from "../_components/notification";
 const mockNotifications = [
   {
     id: 1,
-    message: "User invited successfully",
+    message: "Pengguna berhasil diundang",
     type: "success",
-    time: "5 minutes ago",
+    time: "5 menit yang lalu",
     unread: true,
   },
   {
     id: 2,
-    message: "Dr. Smith created a new exam: Physics Final",
+    message: "Dr. Smith membuat ujian baru: Ujian Fisika Akhir",
     type: "info",
-    time: "30 minutes ago",
+    time: "30 menit yang lalu",
     unread: true,
   },
   {
     id: 3,
-    message: "There are 12 submissions awaiting grading",
+    message: "Ada 12 pengumpulan yang menunggu penilaian",
     type: "alert",
-    time: "1 hour ago",
+    time: "1 jam yang lalu",
     unread: true,
   },
   {
     id: 4,
-    message: "Mathematics Midterm starting in 2 hours",
+    message: "Ujian Matematika Tengah Semester dimulai dalam 2 jam",
     type: "reminder",
-    time: "2 hours ago",
+    time: "2 jam yang lalu",
     unread: false,
   },
 ];
@@ -62,23 +62,23 @@ const mockNotifications = [
 const mockUser = {
   name: "Admin John Doe",
   email: "admin@university.edu",
-  role: "Institution Administrator",
+  role: "Administrator Institusi",
   institution: {
-    name: "ABC University",
+    name: "Universitas ABC",
     logo: null,
   },
 };
 
 const navigationItems = [
-  { href: "/dashboard/admin/users", label: "User Management", icon: Users },
+  { href: "/dashboard/admin/users", label: "Manajemen Pengguna", icon: Users },
   {
     href: "/dashboard/admin/settings",
-    label: "Institution Settings",
+    label: "Pengaturan Institusi",
     icon: Building2,
   },
-  { href: "/dashboard/admin/exams", label: "Exams", icon: FileText },
-  { href: "/dashboard/admin/activity", label: "Activity Log", icon: Activity },
-  { href: "/dashboard/admin/help", label: "Help", icon: HelpCircle },
+  { href: "/dashboard/admin/exams", label: "Ujian", icon: FileText },
+  { href: "/dashboard/admin/activity", label: "Log Aktivitas", icon: Activity },
+  { href: "/dashboard/admin/help", label: "Bantuan", icon: HelpCircle },
 ];
 
 export default function AdminLayout({
@@ -144,7 +144,7 @@ export default function AdminLayout({
                         className="cursor-pointer"
                       >
                         <User className="w-4 h-4" />
-                        View Profile
+                        Lihat Profil
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
@@ -153,7 +153,7 @@ export default function AdminLayout({
                         className="cursor-pointer"
                       >
                         <Settings className="w-4 h-4" />
-                        Settings
+                        Pengaturan
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
@@ -163,7 +163,7 @@ export default function AdminLayout({
                       className="cursor-pointer"
                     >
                       <LogOut className="w-4 h-4" />
-                      Log out
+                      Keluar
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
@@ -204,7 +204,7 @@ export default function AdminLayout({
                             className="cursor-pointer"
                           >
                             <Users className="w-4 h-4 mr-2" />
-                            Users
+                            Pengguna
                           </Link>
                         </DropdownMenuItem>
                         <DropdownMenuItem asChild>
@@ -213,7 +213,7 @@ export default function AdminLayout({
                             className="cursor-pointer"
                           >
                             <UserCog className="w-4 h-4 mr-2" />
-                            Groups
+                            Grup
                           </Link>
                         </DropdownMenuItem>
                       </DropdownMenuContent>
