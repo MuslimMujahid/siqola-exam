@@ -1,7 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { AuthGuard } from "@/components/auth/auth-guard";
+import { useLogout } from "@/hooks/use-logout";
+import { User, Settings, LogOut } from "lucide-react";
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,9 +12,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Notification } from "@/components/dashboard/notification";
-import { useLogout } from "@/hooks/use-logout";
-import { User, Settings, LogOut } from "lucide-react";
+import { AuthGuard } from "../_components/auth-guard";
+import { Notification } from "../_components/notification";
 
 // Mock data - replace with actual API calls
 const mockNotifications = [

@@ -1,10 +1,12 @@
 "use client";
 
 import React from "react";
+
 import Link from "next/link";
 import { motion } from "framer-motion";
+
 import { type UserRoleType } from "@/lib/schemas/auth";
-import { RoleSelectionTabs } from "@/components/auth/role-selection-tabs";
+import { RoleSelectionTabs } from "@/components/ui/role-selection-tabs";
 import {
   Card,
   CardContent,
@@ -12,7 +14,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { InstitutionRegisterForm } from "@/components/auth/institution-register-form";
+import { InstitutionRegisterForm } from "./_components/institution-register-form";
 
 export default function RegisterPage() {
   const [selectedRole, setSelectedRole] = React.useState<UserRoleType>("admin");

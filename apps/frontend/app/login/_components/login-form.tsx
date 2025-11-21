@@ -1,14 +1,15 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import React from "react";
+
 import Link from "next/link";
 import { useForm } from "@tanstack/react-form";
 import { motion } from "framer-motion";
+import { XCircle } from "lucide-react";
+
 import { useLogin } from "@/hooks/use-login";
 import { loginSchema, type UserRoleType } from "@/lib/schemas/auth";
-import { RoleSelectionTabs } from "@/components/auth/role-selection-tabs";
-import { BasicError } from "@/components/auth/basic-error";
-import { EmailVerificationError } from "@/components/auth/email-verification-error";
+import { RoleSelectionTabs } from "@/components/ui/role-selection-tabs";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -21,10 +22,11 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { isApiError } from "@/lib/api/client";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 export function LoginForm() {
   const { login: handleLogin, isLoading, error } = useLogin();
-  const [selectedRole, setSelectedRole] = useState<UserRoleType>("admin");
+  const [selectedRole, setSelectedRole] = React.useState<UserRoleType>("admin");
 
   const form = useForm({
     defaultValues: {
@@ -44,7 +46,7 @@ export function LoginForm() {
   });
 
   // Update form when role changes
-  useEffect(() => {
+  React.useEffect(() => {
     form.setFieldValue("role", selectedRole);
   }, [form, selectedRole]);
 
@@ -80,24 +82,19 @@ export function LoginForm() {
           }}
         >
           <CardContent className="space-y-4 p-6 pt-0">
-            {error &&
-              (isApiError(error) &&
-              error.response?.data?.message?.includes("verify your email") ? (
-                <EmailVerificationError
-                  message={error.response?.data?.message || error.message}
-                  email={form.state.values.email}
-                />
-              ) : (
-                <BasicError
-                  message={
-                    isApiError(error)
-                      ? error.response?.data?.message ||
-                        error.message ||
-                        "Login failed. Please try again."
-                      : "Login failed. Please try again."
-                  }
-                />
-              ))}
+            {error && isApiError(error) && (
+              <Alert variant="error">
+                <XCircle className="h-4 w-4" />
+                <AlertTitle>Login Failed</AlertTitle>
+                <AlertDescription>
+                  {isApiError(error)
+                    ? error.response?.data?.message ||
+                      error.message ||
+                      "Login failed. Please try again."
+                    : "Login failed. Please try again."}
+                </AlertDescription>
+              </Alert>
+            )}
 
             <form.Field name="email">
               {(field) => (

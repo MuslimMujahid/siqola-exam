@@ -7,7 +7,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
-import { Badge } from "../ui/badge";
+import { Badge } from "../../../components/ui/badge";
 
 interface NotificationProps {
   newNotificationsCount: number;

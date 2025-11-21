@@ -1,18 +1,8 @@
 "use client";
 
+import React from "react";
+
 import Link from "next/link";
-import { useState } from "react";
-import { AuthGuard } from "@/components/auth/auth-guard";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Notification } from "@/components/dashboard/notification";
-import { useLogout } from "@/hooks/use-logout";
 import {
   User,
   Settings,
@@ -21,6 +11,18 @@ import {
   ChevronDown,
   Check,
 } from "lucide-react";
+
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { useLogout } from "@/hooks/use-logout";
+import { AuthGuard } from "../_components/auth-guard";
+import { Notification } from "../_components/notification";
 
 // Mock data - replace with actual API calls
 const mockNotifications = [
@@ -64,7 +66,7 @@ export default function ExaminerLayout({
   children: React.ReactNode;
 }) {
   const { logout } = useLogout();
-  const [activeInstitutionId, setActiveInstitutionId] = useState<number>(
+  const [activeInstitutionId, setActiveInstitutionId] = React.useState<number>(
     mockUser.institutions[0].id
   );
 

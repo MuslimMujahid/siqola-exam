@@ -1,15 +1,17 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import React from "react";
+
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { faker } from "@faker-js/faker";
+import { Search, UserCog } from "lucide-react";
+
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, UserCog } from "lucide-react";
 import { Pagination } from "@/components/ui/pagination";
-import { GroupTable } from "@/components/dashboard/group-table";
+import { GroupTable } from "./_components/group-table";
 
 // Generate mock groups
 const generateMockGroups = () => {
@@ -72,12 +74,12 @@ const generateMockGroups = () => {
 };
 
 export default function GroupManagementPage() {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
+  const [searchQuery, setSearchQuery] = React.useState("");
+  const [currentPage, setCurrentPage] = React.useState(1);
   const itemsPerPage = 10;
 
   // Generate mock data
-  const mockGroups = useMemo(() => generateMockGroups(), []);
+  const mockGroups = React.useMemo(() => generateMockGroups(), []);
 
   const filteredGroups = mockGroups.filter((group) =>
     group.name.toLowerCase().includes(searchQuery.toLowerCase())

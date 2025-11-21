@@ -1,19 +1,19 @@
 "use client";
 
-import React from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useForm } from "@tanstack/react-form";
 import { useMutation } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { AxiosError } from "axios";
-import { useAuthStore } from "@/store/auth";
+
 import { institutionRegisterSchema } from "@/lib/schemas/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { CardContent, CardFooter } from "@/components/ui/card";
 import { requestRegistrationOtp } from "@/lib/api/auth";
+import { useAuthStore } from "@/store/auth";
 
 export function InstitutionRegisterForm() {
   const router = useRouter();

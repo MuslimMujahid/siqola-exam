@@ -1,17 +1,19 @@
 "use client";
 
-import { useEffect } from "react";
+import React from "react";
+
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
+
 import { useAuthStore } from "@/store/auth";
-import { LoginForm } from "@/components/auth/login-form";
 import { getDashboardRoute } from "@/lib/utils/dashboard";
+import { LoginForm } from "./_components/login-form";
 
 export default function LoginPage() {
   const router = useRouter();
   const { isAuthenticated, user } = useAuthStore();
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (isAuthenticated && user) {
       const dashboardRoute = getDashboardRoute(user.memberships);
       router.push(dashboardRoute);

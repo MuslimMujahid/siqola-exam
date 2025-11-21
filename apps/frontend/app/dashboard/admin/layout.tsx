@@ -2,17 +2,6 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { AuthGuard } from "@/components/auth/auth-guard";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Notification } from "@/components/dashboard/notification";
-import { useLogout } from "@/hooks/use-logout";
 import {
   User,
   Settings,
@@ -25,6 +14,18 @@ import {
   ChevronDown,
   UserCog,
 } from "lucide-react";
+
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { useLogout } from "@/hooks/use-logout";
+import { AuthGuard } from "../_components/auth-guard";
+import { Notification } from "../_components/notification";
 
 // Mock data - replace with actual API calls
 const mockNotifications = [

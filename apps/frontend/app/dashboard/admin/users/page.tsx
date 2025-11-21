@@ -1,9 +1,12 @@
 "use client";
 
 import React from "react";
+
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { faker } from "@faker-js/faker";
+import { Search, UserPlus } from "lucide-react";
+
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,9 +18,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Search, UserPlus } from "lucide-react";
-import { UserTable } from "@/components/dashboard/user-table";
 import { Pagination } from "@/components/ui/pagination";
+import { UserTable } from "./_components/user-table";
 
 // Generate mock data
 const generateMockExaminers = () => {

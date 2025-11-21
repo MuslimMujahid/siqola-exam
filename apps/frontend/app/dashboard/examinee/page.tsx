@@ -1,7 +1,10 @@
 "use client";
 
+import React from "react";
+
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { Calendar, Clock, Eye, EyeOff, Building2 } from "lucide-react";
+
 import {
   Card,
   CardContent,
@@ -10,7 +13,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ExamCalendar } from "@/components/dashboard/exam-calendar";
 import { Badge } from "@/components/ui/badge";
 import {
   Select,
@@ -19,7 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Calendar, Clock, Eye, EyeOff, Building2 } from "lucide-react";
+import { ExamCalendar } from "./_components/exam-calendar";
 
 // Mock data - replace with actual API calls
 const mockExams = {
@@ -99,10 +101,10 @@ const mockUser = {
 };
 
 export default function ExamineeDashboard() {
-  const [visibleGrades, setVisibleGrades] = useState<Record<number, boolean>>(
-    {}
-  );
-  const [examFilter, setExamFilter] = useState<"all" | number>("all");
+  const [visibleGrades, setVisibleGrades] = React.useState<
+    Record<number, boolean>
+  >({});
+  const [examFilter, setExamFilter] = React.useState<"all" | number>("all");
 
   // Prepare exam data for calendar
   const calendarExams = [...mockExams.upcoming, ...mockExams.ongoing].map(

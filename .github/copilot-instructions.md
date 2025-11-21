@@ -80,6 +80,7 @@ This is a **Turborepo monorepo** both frontend and backend for an online exam pl
 - Create custom components only when necessary.
 - Ensure components are reusable and maintainable.
 - Use icons from Lucide Icons for consistency.
+- For components that exclusive to a page, place them in that page's \_components folder.
 
 ### Code Quality
 
