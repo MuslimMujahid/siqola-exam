@@ -115,7 +115,6 @@ export class AuthService {
         data: {
           userId: user.id,
           institutionId: institution.id,
-          role: 'ADMIN',
         },
         include: {
           institution: true,
@@ -178,6 +177,12 @@ export class AuthService {
       throw new UnauthorizedException('Email or password is incorrect');
     }
 
+    // Update lastLogin timestamp
+    await this.prisma.user.update({
+      where: { id: user.id },
+      data: { lastLogin: new Date() },
+    });
+
     // Generate JWT token
     const jwtSecret = process.env.JWT_SECRET || 'your-secret-key';
     const token = jwt.sign(
@@ -198,8 +203,8 @@ export class AuthService {
         id: userWithoutPassword.id,
         email: userWithoutPassword.email,
         fullName: userWithoutPassword.fullName,
+        role: userWithoutPassword.role,
         memberships: userWithoutPassword.memberships.map((m) => ({
-          role: m.role,
           status: m.status,
           institution: {
             id: m.institution.id,

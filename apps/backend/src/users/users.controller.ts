@@ -15,7 +15,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { CreateMembershipDto } from './dto/create-membership.dto';
 import { UpdateMembershipStatusDto } from './dto/update-membership-status.dto';
-import { PaginationDto } from '../common/dto/pagination.dto';
+import { FilterUsersDto } from './dto/filter-users.dto';
 
 @Controller('users')
 export class UsersController {
@@ -27,8 +27,8 @@ export class UsersController {
   }
 
   @Get()
-  findAll(@Query() paginationDto: PaginationDto) {
-    return this.usersService.findAll(paginationDto.page, paginationDto.limit);
+  findAll(@Query() filterUsersDto: FilterUsersDto) {
+    return this.usersService.findAll(filterUsersDto);
   }
 
   @Get(':id')

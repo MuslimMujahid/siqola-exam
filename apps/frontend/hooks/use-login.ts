@@ -16,17 +16,18 @@ interface LoginCredentials {
  */
 export function useLogin() {
   const router = useRouter();
-  const { setUser, setAuthenticated } = useAuthStore();
+  const { setUser, setToken, setAuthenticated } = useAuthStore();
 
   const loginMutation = useMutation({
     mutationFn: login,
     onSuccess: (data) => {
-      // Update auth store with user data
+      // Update auth store with user data and token
+      setToken(data.token);
       setUser(data.user);
       setAuthenticated(true);
 
       // Redirect to appropriate dashboard based on user's role
-      const dashboardRoute = getDashboardRoute(data.user.memberships);
+      const dashboardRoute = getDashboardRoute(data.user.role);
       router.push(dashboardRoute);
     },
   });

@@ -4,95 +4,61 @@ import React from "react";
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { faker } from "@faker-js/faker";
-import { Search, UserCog } from "lucide-react";
+import { Search, UserCog, Loader2 } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
 
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Pagination } from "@/components/ui/pagination";
+import { useAuthStore } from "@/store/auth";
+import { groupsQueryOptions } from "@/lib/query/groups";
 import { GroupTable } from "./_components/group-table";
 
-// Generate mock groups
-const generateMockGroups = () => {
-  const groupTypes = [
-    { prefix: "Class", suffix: ["A", "B", "C", "D", "E", "F"] },
-    { prefix: "Year", suffix: ["1", "2", "3", "4"] },
-    {
-      prefix: "Department",
-      suffix: [
-        "Mathematics",
-        "Physics",
-        "Chemistry",
-        "Biology",
-        "Engineering",
-        "Computer Science",
-      ],
-    },
-    { prefix: "Lab", suffix: ["A", "B", "C"] },
-  ];
-
-  const groups: {
-    id: number;
-    name: string;
-    description: string;
-    memberCount: number;
-    createdAt: string;
-  }[] = [];
-  let id = 1;
-
-  groupTypes.forEach((type) => {
-    type.suffix.forEach((suffix) => {
-      const name = `${type.prefix} ${suffix}`;
-      const memberCount = faker.number.int({ min: 15, max: 120 });
-
-      let description = "";
-      if (type.prefix === "Class") {
-        description = `Peserta kelas ${suffix}`;
-      } else if (type.prefix === "Year") {
-        description = `Semua peserta di tahun ke-${suffix}`;
-      } else if (type.prefix === "Department") {
-        description = `Fakultas dan peserta di departemen ${suffix}`;
-      } else if (type.prefix === "Lab") {
-        description = `Grup laboratorium ${suffix} untuk sesi praktikum`;
-      }
-
-      groups.push({
-        id: id++,
-        name,
-        description,
-        memberCount,
-        createdAt: faker.date
-          .between({ from: "2024-01-01", to: "2024-12-31" })
-          .toISOString()
-          .split("T")[0],
-      });
-    });
-  });
-
-  return groups;
-};
+const ITEMS_PER_PAGE = 10;
 
 export default function GroupManagementPage() {
   const [searchQuery, setSearchQuery] = React.useState("");
   const [currentPage, setCurrentPage] = React.useState(1);
-  const itemsPerPage = 10;
+  const { user } = useAuthStore();
 
-  // Generate mock data
-  const mockGroups = React.useMemo(() => generateMockGroups(), []);
+  // Get institution ID from user's first membership
+  const institutionId = user?.memberships?.[0]?.institution?.id;
 
-  const filteredGroups = mockGroups.filter((group) =>
-    group.name.toLowerCase().includes(searchQuery.toLowerCase())
+  // Fetch groups from API
+  const {
+    data: groupsData,
+    isLoading,
+    error,
+  } = useQuery(
+    groupsQueryOptions({
+      page: currentPage,
+      limit: ITEMS_PER_PAGE,
+      institutionId,
+    })
   );
 
-  const getPaginatedGroups = () => {
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-    return filteredGroups.slice(startIndex, endIndex);
-  };
+  // Transform API data to match table format
+  const groups = React.useMemo(() => {
+    if (!groupsData?.data) return [];
+    return groupsData.data.map((group) => ({
+      id: group.id,
+      name: group.name,
+      description: group.description || "",
+      memberCount: group._count?.groupMembers || 0,
+      createdAt: new Date(group.createdAt).toISOString().split("T")[0],
+    }));
+  }, [groupsData]);
 
-  const totalPages = Math.ceil(filteredGroups.length / itemsPerPage);
-  const paginatedGroups = getPaginatedGroups();
+  // Filter groups by search query
+  const filteredGroups = React.useMemo(() => {
+    return groups.filter((group) =>
+      group.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  }, [groups, searchQuery]);
+
+  const totalPages = groupsData?.meta?.totalPages || 1;
+  const totalItems = groupsData?.meta?.total || 0;
 
   return (
     <div className="space-y-6">
@@ -137,27 +103,51 @@ export default function GroupManagementPage() {
               </div>
             </div>
 
-            {paginatedGroups.length === 0 ? (
+            {/* Loading State */}
+            {isLoading && (
+              <div className="flex items-center justify-center py-12">
+                <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
+              </div>
+            )}
+
+            {/* Error State */}
+            {error && !isLoading && (
+              <div className="text-center py-12">
+                <p className="text-destructive mb-4">
+                  Gagal memuat data grup. Silakan coba lagi.
+                </p>
+              </div>
+            )}
+
+            {/* Empty State */}
+            {!isLoading && !error && filteredGroups.length === 0 && (
               <div className="text-center py-12">
                 <p className="text-muted-foreground mb-4">
-                  Tidak ada grup yang ditemukan. Buat grup untuk memulai.
+                  {searchQuery
+                    ? "Tidak ada grup yang ditemukan."
+                    : "Tidak ada grup yang ditemukan. Buat grup untuk memulai."}
                 </p>
-                <Button asChild>
-                  <Link href="/dashboard/admin/groups/create">
-                    <UserCog className="w-4 h-4 mr-2" />
-                    Buat Grup
-                  </Link>
-                </Button>
+                {!searchQuery && (
+                  <Button asChild>
+                    <Link href="/dashboard/admin/groups/create">
+                      <UserCog className="w-4 h-4 mr-2" />
+                      Buat Grup
+                    </Link>
+                  </Button>
+                )}
               </div>
-            ) : (
+            )}
+
+            {/* Groups Table */}
+            {!isLoading && !error && filteredGroups.length > 0 && (
               <>
-                <GroupTable groups={paginatedGroups} />
+                <GroupTable groups={filteredGroups} />
 
                 <Pagination
                   currentPage={currentPage}
                   totalPages={totalPages}
-                  totalItems={filteredGroups.length}
-                  itemsPerPage={itemsPerPage}
+                  totalItems={totalItems}
+                  itemsPerPage={ITEMS_PER_PAGE}
                   onPageChange={setCurrentPage}
                 />
               </>

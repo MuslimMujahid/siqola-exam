@@ -14,7 +14,9 @@ import { GroupsService } from './groups.service';
 import { CreateGroupDto } from './dto/create-group.dto';
 import { UpdateGroupDto } from './dto/update-group.dto';
 import { AddGroupMemberDto } from './dto/add-group-member.dto';
-import { PaginationDto } from '../common/dto/pagination.dto';
+import { AddBatchGroupMembersDto } from './dto/add-batch-group-members.dto';
+import { RemoveBatchGroupMembersDto } from './dto/remove-batch-group-members.dto';
+import { QueryGroupsDto } from './dto/query-groups.dto';
 
 @Controller('groups')
 export class GroupsController {
@@ -26,14 +28,11 @@ export class GroupsController {
   }
 
   @Get()
-  findAll(
-    @Query() paginationDto: PaginationDto,
-    @Query('institutionId') institutionId?: string,
-  ) {
+  findAll(@Query() queryGroupsDto: QueryGroupsDto) {
     return this.groupsService.findAll(
-      paginationDto.page,
-      paginationDto.limit,
-      institutionId,
+      queryGroupsDto.page,
+      queryGroupsDto.limit,
+      queryGroupsDto.institutionId,
     );
   }
 
@@ -59,6 +58,26 @@ export class GroupsController {
     @Body() addGroupMemberDto: AddGroupMemberDto,
   ) {
     return this.groupsService.addMember(id, addGroupMemberDto);
+  }
+
+  @Post(':id/members/batch')
+  addBatchMembers(
+    @Param('id') id: string,
+    @Body() addBatchGroupMembersDto: AddBatchGroupMembersDto,
+  ) {
+    return this.groupsService.addBatchMembers(id, addBatchGroupMembersDto);
+  }
+
+  @Delete(':id/members/batch')
+  @HttpCode(HttpStatus.OK)
+  removeBatchMembers(
+    @Param('id') id: string,
+    @Body() removeBatchGroupMembersDto: RemoveBatchGroupMembersDto,
+  ) {
+    return this.groupsService.removeBatchMembers(
+      id,
+      removeBatchGroupMembersDto,
+    );
   }
 
   @Delete(':id/members/:userId')

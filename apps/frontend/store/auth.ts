@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { persist, createJSONStorage } from "zustand/middleware";
 import { logout as logoutApi } from "@/lib/api/auth";
 
 interface Institution {
@@ -10,9 +10,8 @@ interface Institution {
   phoneNumber?: string;
 }
 
-interface Membership {
+export interface Membership {
   id: string;
-  role: string;
   status: string;
   institution: {
     id: string;
@@ -25,7 +24,7 @@ interface User {
   id: string;
   email: string;
   fullName: string;
-  role?: string;
+  role: string;
   memberships?: Membership[];
 }
 
@@ -35,11 +34,13 @@ type AuthState = {
   token: string | null;
   isAuthenticated: boolean;
   error: string | null;
+  _hasHydrated: boolean;
   setInstitution: (institution: Institution | null) => void;
   setUser: (user: User | null) => void;
   setToken: (token: string | null) => void;
   setAuthenticated: (isAuthenticated: boolean) => void;
   setError: (error: string | null) => void;
+  setHasHydrated: (state: boolean) => void;
   logout: () => void;
 };
 
@@ -51,6 +52,7 @@ export const useAuthStore = create<AuthState>()(
       token: null,
       isAuthenticated: false,
       error: null,
+      _hasHydrated: false,
       setInstitution: (institution) => set({ institution }),
       setUser: (user) => set({ user, isAuthenticated: !!user }),
       setToken: (token) => {
@@ -63,6 +65,7 @@ export const useAuthStore = create<AuthState>()(
       },
       setAuthenticated: (isAuthenticated) => set({ isAuthenticated }),
       setError: (error) => set({ error }),
+      setHasHydrated: (state) => set({ _hasHydrated: state }),
       logout: () => {
         logoutApi();
         set({
@@ -76,12 +79,16 @@ export const useAuthStore = create<AuthState>()(
     }),
     {
       name: "auth-storage",
+      storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({
         institution: state.institution,
         user: state.user,
         token: state.token,
         isAuthenticated: state.isAuthenticated,
       }),
+      onRehydrateStorage: () => (state) => {
+        state?.setHasHydrated(true);
+      },
     }
   )
 );

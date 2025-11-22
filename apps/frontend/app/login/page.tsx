@@ -15,7 +15,7 @@ export default function LoginPage() {
 
   React.useEffect(() => {
     if (isAuthenticated && user) {
-      const dashboardRoute = getDashboardRoute(user.memberships);
+      const dashboardRoute = getDashboardRoute(user.role);
       router.push(dashboardRoute);
     }
   }, [isAuthenticated, user, router]);

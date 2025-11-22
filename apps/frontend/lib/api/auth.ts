@@ -77,9 +77,9 @@ export interface VerifyRegistrationOtpResponse {
     id: string;
     email: string;
     fullName: string;
+    role: string;
     memberships: Array<{
       id: string;
-      role: string;
       status: string;
       institution: {
         id: string;
@@ -111,10 +111,10 @@ export interface LoginResponse {
     id: string;
     email: string;
     fullName: string;
+    role: string;
     emailVerified: boolean;
     memberships: Array<{
       id: string;
-      role: string;
       status: string;
       institution: {
         id: string;

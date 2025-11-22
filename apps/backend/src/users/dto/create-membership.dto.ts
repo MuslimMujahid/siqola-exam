@@ -1,10 +1,4 @@
-import { IsString, IsEnum, IsOptional } from 'class-validator';
-
-export enum Role {
-  ADMIN = 'ADMIN',
-  EXAMINER = 'EXAMINER',
-  EXAMINEE = 'EXAMINEE',
-}
+import { IsString, IsOptional } from 'class-validator';
 
 export class CreateMembershipDto {
   @IsString()
@@ -12,9 +6,6 @@ export class CreateMembershipDto {
 
   @IsString()
   institutionId: string;
-
-  @IsEnum(Role)
-  role: Role;
 
   @IsOptional()
   @IsString()

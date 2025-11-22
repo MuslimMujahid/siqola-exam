@@ -1,10 +1,12 @@
 "use client";
 
-import { useEffect } from "react";
+import React from "react";
+
 import { useRouter } from "next/navigation";
-import { useAuthStore } from "@/store/auth";
 import { motion } from "framer-motion";
 import { Loader2 } from "lucide-react";
+
+import { useAuthStore } from "@/store/auth";
 
 interface AuthGuardProps {
   children: React.ReactNode;
@@ -18,9 +20,12 @@ export function AuthGuard({
   redirectTo = "/login",
 }: AuthGuardProps) {
   const router = useRouter();
-  const { isAuthenticated, user } = useAuthStore();
+  const { isAuthenticated, user, _hasHydrated } = useAuthStore();
 
-  useEffect(() => {
+  React.useEffect(() => {
+    // Wait for hydration to complete before checking auth
+    if (!_hasHydrated) return;
+
     // If not authenticated, redirect to login
     if (!isAuthenticated) {
       router.push(redirectTo);
@@ -33,12 +38,11 @@ export function AuthGuard({
       return;
     }
 
-    // If specific roles are required, check user's memberships
+    // If specific roles are required, check user's role
     if (allowedRoles.length > 0) {
-      const userRoles =
-        user.memberships?.map((m) => m.role.toUpperCase()) || [];
-      const hasRequiredRole = allowedRoles.some((role) =>
-        userRoles.includes(role.toUpperCase())
+      const userRole = user.role?.toUpperCase();
+      const hasRequiredRole = allowedRoles.some(
+        (role) => role.toUpperCase() === userRole
       );
 
       if (!hasRequiredRole) {
@@ -47,10 +51,10 @@ export function AuthGuard({
         return;
       }
     }
-  }, [isAuthenticated, user, router, allowedRoles, redirectTo]);
+  }, [_hasHydrated, isAuthenticated, user, router, allowedRoles, redirectTo]);
 
-  // Show loading while checking authentication
-  if (!isAuthenticated || !user) {
+  // Show loading while hydrating or checking authentication
+  if (!_hasHydrated || !isAuthenticated || !user) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <motion.div

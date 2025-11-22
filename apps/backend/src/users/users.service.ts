@@ -8,7 +8,9 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { CreateMembershipDto } from './dto/create-membership.dto';
 import { UpdateMembershipStatusDto } from './dto/update-membership-status.dto';
+import { FilterUsersDto } from './dto/filter-users.dto';
 import * as bcrypt from 'bcrypt';
+import { UserWhereInput } from 'generated/prisma/models';
 
 @Injectable()
 export class UsersService {
@@ -40,17 +42,71 @@ export class UsersService {
     });
   }
 
-  async findAll(page: number = 1, limit: number = 10) {
+  async findAll(filterUsersDto: FilterUsersDto) {
+    const {
+      page = 1,
+      limit = 10,
+      search,
+      role,
+      status,
+      institutionId,
+      groupId,
+      excludeGroupId,
+    } = filterUsersDto;
     const skip = (page - 1) * limit;
+
+    // Build where clause for filtering
+    const where: UserWhereInput = {};
+
+    // Search by name or email
+    if (search) {
+      where.OR = [
+        { fullName: { contains: search, mode: 'insensitive' } },
+        { email: { contains: search, mode: 'insensitive' } },
+      ];
+    }
+
+    // Filter by role on user
+    if (role?.length) {
+      where.role = { in: role };
+    }
+
+    // Filter by status or institution on membership (arrays)
+    if (status?.length || institutionId?.length) {
+      where.memberships = {
+        some: {
+          ...(status?.length && { status: { in: status } }),
+          ...(institutionId?.length && {
+            institutionId: { in: institutionId },
+          }),
+        },
+      };
+    }
+
+    // Filter by group - users must be in at least one of the specified groups
+    if (groupId?.length) {
+      where.groupMembers = {
+        some: { groupId: { in: groupId } },
+      };
+    }
+
+    // Exclude users already in any of the specified groups
+    if (excludeGroupId?.length) {
+      where.groupMembers = {
+        none: { groupId: { in: excludeGroupId } },
+      };
+    }
 
     const [users, total] = await Promise.all([
       this.prisma.user.findMany({
+        where,
         skip,
         take: limit,
         select: {
           id: true,
           email: true,
           fullName: true,
+          lastLogin: true,
           createdAt: true,
           updatedAt: true,
           memberships: {
@@ -61,7 +117,7 @@ export class UsersService {
         },
         orderBy: { createdAt: 'desc' },
       }),
-      this.prisma.user.count(),
+      this.prisma.user.count({ where }),
     ]);
 
     return {
@@ -82,6 +138,7 @@ export class UsersService {
         id: true,
         email: true,
         fullName: true,
+        lastLogin: true,
         createdAt: true,
         updatedAt: true,
         memberships: {

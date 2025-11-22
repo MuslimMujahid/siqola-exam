@@ -24,7 +24,7 @@ export default function VerifyRegistrationPage() {
   const email = searchParams.get("email") || "";
   const [otp, setOtp] = React.useState(["", "", "", "", "", ""]);
   const [resendSuccess, setResendSuccess] = React.useState(false);
-  const { setError, setUser, setAuthenticated } = useAuthStore();
+  const { setError, setUser, setToken, setAuthenticated } = useAuthStore();
 
   const verifyMutation = useMutation({
     mutationFn: verifyRegistrationOtp,
@@ -33,6 +33,7 @@ export default function VerifyRegistrationPage() {
 
       // Auto-login
       if (data.token) {
+        setToken(data.token);
         setUser(data.user);
         setAuthenticated(true);
         router.push("/dashboard/admin");

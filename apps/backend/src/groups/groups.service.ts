@@ -7,6 +7,8 @@ import { PrismaService } from '../prisma/prisma.service';
 import { CreateGroupDto } from './dto/create-group.dto';
 import { UpdateGroupDto } from './dto/update-group.dto';
 import { AddGroupMemberDto } from './dto/add-group-member.dto';
+import { AddBatchGroupMembersDto } from './dto/add-batch-group-members.dto';
+import { RemoveBatchGroupMembersDto } from './dto/remove-batch-group-members.dto';
 
 @Injectable()
 export class GroupsService {
@@ -23,16 +25,59 @@ export class GroupsService {
       );
     }
 
-    return this.prisma.group.create({
-      data: createGroupDto,
-      include: {
-        institution: true,
-        _count: {
-          select: {
-            groupMembers: true,
+    const { memberIds, ...groupData } = createGroupDto;
+
+    // Create group with members in a transaction
+    return this.prisma.$transaction(async (tx) => {
+      const group = await tx.group.create({
+        data: groupData,
+        include: {
+          institution: true,
+          _count: {
+            select: {
+              groupMembers: true,
+            },
           },
         },
-      },
+      });
+
+      // Add members if provided
+      if (memberIds && memberIds.length > 0) {
+        // Verify all users exist
+        const users = await tx.user.findMany({
+          where: { id: { in: memberIds } },
+          select: { id: true },
+        });
+
+        const existingUserIds = new Set(users.map((u) => u.id));
+        const validMemberIds = memberIds.filter((id) =>
+          existingUserIds.has(id),
+        );
+
+        // Create group members
+        if (validMemberIds.length > 0) {
+          await tx.groupMember.createMany({
+            data: validMemberIds.map((userId) => ({
+              groupId: group.id,
+              userId,
+            })),
+            skipDuplicates: true,
+          });
+        }
+      }
+
+      // Return group with updated count
+      return tx.group.findUnique({
+        where: { id: group.id },
+        include: {
+          institution: true,
+          _count: {
+            select: {
+              groupMembers: true,
+            },
+          },
+        },
+      });
     });
   }
 
@@ -75,17 +120,6 @@ export class GroupsService {
       where: { id },
       include: {
         institution: true,
-        groupMembers: {
-          include: {
-            user: {
-              select: {
-                id: true,
-                email: true,
-                fullName: true,
-              },
-            },
-          },
-        },
       },
     });
 
@@ -185,5 +219,158 @@ export class GroupsService {
         },
       },
     });
+  }
+
+  async addBatchMembers(
+    groupId: string,
+    addBatchGroupMembersDto: AddBatchGroupMembersDto,
+  ) {
+    // Verify group exists
+    await this.findOne(groupId);
+
+    const results: Array<{
+      userId: string;
+      success: boolean;
+      error?: string;
+    }> = [];
+    let successCount = 0;
+    let failedCount = 0;
+
+    for (const userId of addBatchGroupMembersDto.userIds) {
+      try {
+        // Check if user exists
+        const user = await this.prisma.user.findUnique({
+          where: { id: userId },
+        });
+
+        if (!user) {
+          results.push({
+            userId,
+            success: false,
+            error: `User with ID ${userId} not found`,
+          });
+          failedCount++;
+          continue;
+        }
+
+        // Check if member already exists
+        const existingMember = await this.prisma.groupMember.findUnique({
+          where: {
+            groupId_userId: {
+              groupId,
+              userId,
+            },
+          },
+        });
+
+        if (existingMember) {
+          results.push({
+            userId,
+            success: false,
+            error: 'User is already a member of this group',
+          });
+          failedCount++;
+          continue;
+        }
+
+        // Add member
+        await this.prisma.groupMember.create({
+          data: {
+            groupId,
+            userId,
+          },
+        });
+
+        results.push({
+          userId,
+          success: true,
+        });
+        successCount++;
+      } catch (error) {
+        results.push({
+          userId,
+          success: false,
+          error:
+            error instanceof Error ? error.message : 'Failed to add member',
+        });
+        failedCount++;
+      }
+    }
+
+    return {
+      success: successCount,
+      failed: failedCount,
+      results,
+    };
+  }
+
+  async removeBatchMembers(
+    groupId: string,
+    removeBatchGroupMembersDto: RemoveBatchGroupMembersDto,
+  ) {
+    // Verify group exists
+    await this.findOne(groupId);
+
+    const results: Array<{
+      userId: string;
+      success: boolean;
+      error?: string;
+    }> = [];
+    let successCount = 0;
+    let failedCount = 0;
+
+    for (const userId of removeBatchGroupMembersDto.userIds) {
+      try {
+        // Check if member exists
+        const groupMember = await this.prisma.groupMember.findUnique({
+          where: {
+            groupId_userId: {
+              groupId,
+              userId,
+            },
+          },
+        });
+
+        if (!groupMember) {
+          results.push({
+            userId,
+            success: false,
+            error: 'Group member not found',
+          });
+          failedCount++;
+          continue;
+        }
+
+        // Remove member
+        await this.prisma.groupMember.delete({
+          where: {
+            groupId_userId: {
+              groupId,
+              userId,
+            },
+          },
+        });
+
+        results.push({
+          userId,
+          success: true,
+        });
+        successCount++;
+      } catch (error) {
+        results.push({
+          userId,
+          success: false,
+          error:
+            error instanceof Error ? error.message : 'Failed to remove member',
+        });
+        failedCount++;
+      }
+    }
+
+    return {
+      success: successCount,
+      failed: failedCount,
+      results,
+    };
   }
 }
