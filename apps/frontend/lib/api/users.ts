@@ -19,6 +19,13 @@ export interface User {
       logo?: string;
     };
   }>;
+  groupMembers?: Array<{
+    id: string;
+    group: {
+      id: string;
+      name: string;
+    };
+  }>;
 }
 
 export type GetUsersParams = {
@@ -55,11 +62,27 @@ export async function getUsers(
 }
 
 /**
- * Get a single user by ID
+ * Get a single user by ID with detailed info
  */
 export async function getUser(id: string): Promise<User> {
   const response = await apiClient.get<User>(`/users/${id}`);
   return response.data;
+}
+
+/**
+ * Update user membership status (activate/suspend)
+ */
+export async function updateUserMembershipStatus(
+  userId: string,
+  institutionId: string,
+  status: UserStatus
+): Promise<void> {
+  await apiClient.patch(
+    `/users/${userId}/institutions/${institutionId}/status`,
+    {
+      status,
+    }
+  );
 }
 
 /**
@@ -76,5 +99,13 @@ export async function getUsersByInstitution(params: {
   const response = await apiClient.get<UsersListResponse>("/users", {
     params,
   });
+  return response.data;
+}
+
+/**
+ * Delete a user by ID
+ */
+export async function deleteUser(userId: string): Promise<User> {
+  const response = await apiClient.delete<User>(`/users/${userId}`);
   return response.data;
 }

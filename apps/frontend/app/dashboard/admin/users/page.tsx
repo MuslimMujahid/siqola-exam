@@ -4,9 +4,10 @@ import React from "react";
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { faker } from "@faker-js/faker";
 import { Search, UserPlus } from "lucide-react";
 
+import { useDebounce } from "@/hooks/use-debounce";
+import { useAuthStore } from "@/store/auth";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -20,86 +21,11 @@ import {
 } from "@/components/ui/select";
 import { Pagination } from "@/components/ui/pagination";
 import { UserTable } from "./_components/user-table";
-
-// Generate mock data
-const generateMockExaminers = () => {
-  const statuses = ["active", "suspended", "pending"] as const;
-
-  return Array.from({ length: 45 }, (_, i) => {
-    const firstName = faker.person.firstName();
-    const lastName = faker.person.lastName();
-    const title = faker.helpers.arrayElement(["Dr.", "Prof."]);
-
-    return {
-      id: i + 1,
-      name: `${title} ${firstName} ${lastName}`,
-      email: faker.internet
-        .email({
-          firstName: firstName.toLowerCase(),
-          lastName: lastName.toLowerCase(),
-          provider: "university.edu",
-        })
-        .toLowerCase(),
-      status: faker.helpers.arrayElement(statuses),
-      createdAt: faker.date
-        .between({ from: "2024-01-01", to: "2024-12-31" })
-        .toISOString()
-        .split("T")[0],
-    };
-  });
-};
-
-const generateMockExaminees = () => {
-  const statuses = ["active", "suspended", "pending"] as const;
-  const classes = ["Class A", "Class B", "Class C", "Class D", "Class E"];
-  const years = ["Year 1", "Year 2", "Year 3", "Year 4"];
-
-  return Array.from({ length: 120 }, (_, i) => {
-    const firstName = faker.person.firstName();
-    const lastName = faker.person.lastName();
-    const selectedClass = faker.helpers.arrayElement(classes);
-    const selectedYear = faker.helpers.arrayElement(years);
-
-    return {
-      id: i + 101,
-      name: `${firstName} ${lastName}`,
-      email: faker.internet
-        .email({
-          firstName: firstName.toLowerCase(),
-          lastName: lastName.toLowerCase(),
-          provider: "university.edu",
-        })
-        .toLowerCase(),
-      groups: [selectedClass, selectedYear],
-      status: faker.helpers.arrayElement(statuses),
-      createdAt: faker.date
-        .between({ from: "2024-01-01", to: "2024-12-31" })
-        .toISOString()
-        .split("T")[0],
-    };
-  });
-};
-
-const allGroups = [
-  "Class A",
-  "Class B",
-  "Class C",
-  "Class D",
-  "Class E",
-  "Year 1",
-  "Year 2",
-  "Year 3",
-  "Year 4",
-];
-
-const generatedExaminers = generateMockExaminers();
-const generatedExaminees = generateMockExaminees();
-
-type Examiner = (typeof generatedExaminers)[0];
-type Examinee = (typeof generatedExaminees)[0];
-type Users = Examiner | Examinee;
+import { useQuery } from "@tanstack/react-query";
+import { usersQueryOptions } from "@/lib/query/users";
 
 export default function UserManagementPage() {
+  const { user } = useAuthStore();
   const [activeTab, setActiveTab] = React.useState("examiners");
   const [searchQuery, setSearchQuery] = React.useState("");
   const [statusFilter, setStatusFilter] = React.useState("all");
@@ -107,37 +33,54 @@ export default function UserManagementPage() {
   const [currentPage, setCurrentPage] = React.useState(1);
   const itemsPerPage = 10;
 
-  const getFilteredUsers = (users: Users[]) => {
-    return users.filter((user) => {
-      const matchesSearch =
-        user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        user.email.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchesStatus =
-        statusFilter === "all" || user.status === statusFilter;
-      const matchesGroup =
-        groupFilter === "all" ||
-        ("groups" in user && user.groups && user.groups.includes(groupFilter));
-      return matchesSearch && matchesStatus && matchesGroup;
-    });
-  };
+  // Debounce search query to avoid too many API calls
+  const debouncedSearch = useDebounce(searchQuery, 500);
 
-  const filteredExaminers = getFilteredUsers(generatedExaminers);
-  const filteredExaminees = getFilteredUsers(generatedExaminees);
+  // Get institution ID from user memberships
+  const institutionId = user?.memberships?.[0]?.institution?.id;
 
-  const getPaginatedUsers = (users: Users[]) => {
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-    return users.slice(startIndex, endIndex);
-  };
+  // Determine role filter based on active tab
+  const roleFilter = activeTab === "examiners" ? "EXAMINER" : "EXAMINEE";
 
-  const getTotalPages = (users: Users[]) => {
-    return Math.ceil(users.length / itemsPerPage);
-  };
+  // Build query parameters
+  const queryParams = React.useMemo(() => {
+    const params: Record<string, string | number> = {
+      page: currentPage,
+      limit: itemsPerPage,
+      role: roleFilter,
+    };
 
-  const currentUsers =
-    activeTab === "examiners" ? filteredExaminers : filteredExaminees;
-  const paginatedUsers = getPaginatedUsers(currentUsers);
-  const totalPages = getTotalPages(currentUsers);
+    if (institutionId) {
+      params.institutionId = institutionId;
+    }
+
+    if (debouncedSearch) {
+      params.search = debouncedSearch;
+    }
+
+    if (statusFilter !== "all") {
+      params.status = statusFilter.toUpperCase();
+    }
+
+    if (groupFilter !== "all" && activeTab === "examinees") {
+      params.groupId = groupFilter;
+    }
+
+    return params;
+  }, [
+    currentPage,
+    roleFilter,
+    institutionId,
+    debouncedSearch,
+    statusFilter,
+    groupFilter,
+    activeTab,
+  ]);
+
+  // Fetch users from API
+  const { data: usersData, isLoading } = useQuery(
+    usersQueryOptions(queryParams)
+  );
 
   const handleTabChange = (value: string) => {
     setActiveTab(value);
@@ -146,6 +89,26 @@ export default function UserManagementPage() {
     setStatusFilter("all");
     setGroupFilter("all");
   };
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
+    setCurrentPage(1); // Reset to first page when searching
+  };
+
+  const handleStatusFilterChange = (value: string) => {
+    setStatusFilter(value);
+    setCurrentPage(1); // Reset to first page when filtering
+  };
+
+  const handleGroupFilterChange = (value: string) => {
+    setGroupFilter(value);
+    setCurrentPage(1); // Reset to first page when filtering
+  };
+
+  // Extract data from response
+  const users = usersData?.data || [];
+  const totalUsers = usersData?.meta?.total || 0;
+  const totalPages = usersData?.meta?.totalPages || 1;
 
   return (
     <div className="space-y-6">
@@ -183,10 +146,10 @@ export default function UserManagementPage() {
             <Tabs value={activeTab} onValueChange={handleTabChange}>
               <TabsList className="mb-4">
                 <TabsTrigger value="examiners">
-                  Penguji ({filteredExaminers.length})
+                  Penguji {activeTab === "examiners" && `(${totalUsers})`}
                 </TabsTrigger>
                 <TabsTrigger value="examinees">
-                  Peserta ({filteredExaminees.length})
+                  Peserta {activeTab === "examinees" && `(${totalUsers})`}
                 </TabsTrigger>
               </TabsList>
 
@@ -198,12 +161,15 @@ export default function UserManagementPage() {
                     <Input
                       placeholder="Cari berdasarkan nama atau email..."
                       value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
+                      onChange={handleSearchChange}
                       className="pl-9"
                     />
                   </div>
                 </div>
-                <Select value={statusFilter} onValueChange={setStatusFilter}>
+                <Select
+                  value={statusFilter}
+                  onValueChange={handleStatusFilterChange}
+                >
                   <SelectTrigger className="w-[140px]">
                     <SelectValue placeholder="Status" />
                   </SelectTrigger>
@@ -215,72 +181,66 @@ export default function UserManagementPage() {
                   </SelectContent>
                 </Select>
                 {activeTab === "examinees" && (
-                  <Select value={groupFilter} onValueChange={setGroupFilter}>
+                  <Select
+                    value={groupFilter}
+                    onValueChange={handleGroupFilterChange}
+                  >
                     <SelectTrigger className="w-[180px]">
                       <SelectValue placeholder="Group" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="all">Semua Grup</SelectItem>
-                      {allGroups.map((group) => (
-                        <SelectItem key={group} value={group}>
-                          {group}
-                        </SelectItem>
-                      ))}
                     </SelectContent>
                   </Select>
                 )}
               </div>
 
               <TabsContent value="examiners" className="space-y-4">
-                {paginatedUsers.length === 0 ? (
-                  <div className="text-center py-12">
-                    <p className="text-muted-foreground mb-4">
-                      Penguji tidak ditemukan. Tambahkan penguji untuk memulai.
-                    </p>
-                    <Button asChild>
-                      <Link href="/dashboard/admin/users/add-examiner">
-                        <UserPlus className="w-4 h-4 mr-2" />
-                        Tambah Penguji
-                      </Link>
-                    </Button>
-                  </div>
+                {!isLoading && users.length === 0 ? (
+                  <p className="text-muted-foreground mb-4 text-center py-12">
+                    Penguji tidak ditemukan.
+                  </p>
                 ) : (
                   <>
-                    <UserTable users={paginatedUsers} showGroups={false} />
-                    <Pagination
-                      currentPage={currentPage}
-                      totalPages={totalPages}
-                      totalItems={currentUsers.length}
-                      itemsPerPage={itemsPerPage}
-                      onPageChange={setCurrentPage}
+                    <UserTable
+                      users={users}
+                      showGroups={false}
+                      isLoading={isLoading}
                     />
+                    {!isLoading && (
+                      <Pagination
+                        currentPage={currentPage}
+                        totalPages={totalPages}
+                        totalItems={totalUsers}
+                        itemsPerPage={itemsPerPage}
+                        onPageChange={setCurrentPage}
+                      />
+                    )}
                   </>
                 )}
               </TabsContent>
 
               <TabsContent value="examinees" className="space-y-4">
-                {paginatedUsers.length === 0 ? (
-                  <div className="text-center py-12">
-                    <p className="text-muted-foreground mb-4">
-                      Peserta tidak ditemukan. Tambahkan peserta untuk memulai.
-                    </p>
-                    <Button asChild>
-                      <Link href="/dashboard/admin/users/add-examinee">
-                        <UserPlus className="w-4 h-4 mr-2" />
-                        Tambah Peserta
-                      </Link>
-                    </Button>
-                  </div>
+                {!isLoading && users.length === 0 ? (
+                  <p className="text-muted-foreground mb-4 text-center py-12">
+                    Peserta tidak ditemukan.
+                  </p>
                 ) : (
                   <>
-                    <UserTable users={paginatedUsers} showGroups={true} />
-                    <Pagination
-                      currentPage={currentPage}
-                      totalPages={totalPages}
-                      totalItems={currentUsers.length}
-                      itemsPerPage={itemsPerPage}
-                      onPageChange={setCurrentPage}
+                    <UserTable
+                      users={users}
+                      showGroups={true}
+                      isLoading={isLoading}
                     />
+                    {!isLoading && (
+                      <Pagination
+                        currentPage={currentPage}
+                        totalPages={totalPages}
+                        totalItems={totalUsers}
+                        itemsPerPage={itemsPerPage}
+                        onPageChange={setCurrentPage}
+                      />
+                    )}
                   </>
                 )}
               </TabsContent>
