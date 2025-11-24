@@ -106,6 +106,7 @@ export class UsersService {
           id: true,
           email: true,
           fullName: true,
+          role: true,
           lastLogin: true,
           createdAt: true,
           updatedAt: true,

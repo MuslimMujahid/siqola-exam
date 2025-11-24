@@ -14,6 +14,7 @@ import { InstitutionsService } from './institutions.service';
 import { CreateInstitutionDto } from './dto/create-institution.dto';
 import { UpdateInstitutionDto } from './dto/update-institution.dto';
 import { PaginationDto } from '../common/dto/pagination.dto';
+import { InstitutionStatsDto } from './dto/institution-stats.dto';
 
 @Controller('institutions')
 export class InstitutionsController {
@@ -35,6 +36,11 @@ export class InstitutionsController {
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.institutionsService.findOne(id);
+  }
+
+  @Get(':id/stats')
+  getStats(@Param('id') id: string): Promise<InstitutionStatsDto> {
+    return this.institutionsService.getStats(id);
   }
 
   @Patch(':id')

@@ -11,3 +11,4 @@ export { useUpdateMembershipStatus } from "./use-update-membership-status";
 export { useDeleteUser } from "./use-delete-user";
 export { useUpdateUserStatus } from "./use-update-user-status";
 export { useConfirm } from "./use-confirm";
+export { useInstitutionStats } from "./use-institution-stats";

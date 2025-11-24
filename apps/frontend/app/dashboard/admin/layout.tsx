@@ -26,6 +26,8 @@ import {
 import { useLogout } from "@/hooks/use-logout";
 import { AuthGuard } from "../_components/auth-guard";
 import { Notification } from "../_components/notification";
+import { useAuthStore } from "@/store/auth";
+import { NavComingSoonWrapper } from "@/components/ui/nav-coming-soon-wrapper";
 
 // Mock data - replace with actual API calls
 const mockNotifications = [
@@ -75,10 +77,26 @@ const navigationItems = [
     href: "/dashboard/admin/settings",
     label: "Pengaturan Institusi",
     icon: Building2,
+    comingSoon: true,
   },
-  { href: "/dashboard/admin/exams", label: "Ujian", icon: FileText },
-  { href: "/dashboard/admin/activity", label: "Log Aktivitas", icon: Activity },
-  { href: "/dashboard/admin/help", label: "Bantuan", icon: HelpCircle },
+  {
+    href: "/dashboard/admin/exams",
+    label: "Ujian",
+    icon: FileText,
+    comingSoon: true,
+  },
+  {
+    href: "/dashboard/admin/activity",
+    label: "Log Aktivitas",
+    icon: Activity,
+    comingSoon: true,
+  },
+  {
+    href: "/dashboard/admin/help",
+    label: "Bantuan",
+    icon: HelpCircle,
+    comingSoon: true,
+  },
 ];
 
 export default function AdminLayout({
@@ -87,10 +105,15 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const { user } = useAuthStore();
   const { logout } = useLogout();
+
   const newNotificationsCount = mockNotifications.filter(
     (n) => n.unread
   ).length;
+
+  const institutionName =
+    user?.memberships?.[0]?.institution?.name || "Institusi";
 
   return (
     <AuthGuard allowedRoles={["ADMIN"]}>
@@ -100,14 +123,14 @@ export default function AdminLayout({
           <div className="container mx-auto px-6">
             <div className="flex items-center justify-between py-4">
               <div className="flex items-center gap-4">
-                <h1 className="text-lg font-semibold tracking-tight text-primary">
-                  SiqolaExam
-                </h1>
+                <Link href="/dashboard/admin">
+                  <h1 className="text-lg font-semibold tracking-tight text-primary">
+                    SiqolaExam
+                  </h1>
+                </Link>
                 <div className="flex items-center gap-1 px-3 py-1.5 text-sm rounded-md bg-muted/30">
                   <Building2 className="w-4 h-4 text-muted-foreground" />
-                  <span className="font-medium">
-                    {mockUser.institution.name}
-                  </span>
+                  <span className="font-medium">{institutionName}</span>
                 </div>
               </div>
 
@@ -221,7 +244,7 @@ export default function AdminLayout({
                   );
                 }
 
-                return (
+                const navItem = (
                   <Link
                     key={item.href}
                     href={item.href}
@@ -234,6 +257,14 @@ export default function AdminLayout({
                     <Icon className="w-4 h-4" />
                     {item.label}
                   </Link>
+                );
+
+                return item.comingSoon ? (
+                  <NavComingSoonWrapper key={item.href}>
+                    {navItem}
+                  </NavComingSoonWrapper>
+                ) : (
+                  navItem
                 );
               })}
             </nav>

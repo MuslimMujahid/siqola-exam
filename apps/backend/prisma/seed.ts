@@ -29,14 +29,14 @@ async function main() {
       data: {
         name: 'Universitas Indonesia',
         address: 'Jl. Margonda Raya, Depok, Jawa Barat 16424',
-        logo: 'https://ui.ac.id/wp-content/uploads/2020/04/logo-ui.png',
+        logo: null,
       },
     }),
     prisma.institution.create({
       data: {
         name: 'Institut Teknologi Bandung',
         address: 'Jl. Ganesha No.10, Bandung, Jawa Barat 40132',
-        logo: 'https://www.itb.ac.id/files/images/logo-itb.png',
+        logo: null,
       },
     }),
     prisma.institution.create({

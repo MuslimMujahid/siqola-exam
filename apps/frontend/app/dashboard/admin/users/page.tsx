@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/select";
 import { Pagination } from "@/components/ui/pagination";
 import { UserTable } from "./_components/user-table";
-import { InviteUserDialog } from "./_components/invite-user-dialog";
+import { InviteUserDialog } from "../_components/invite-user-dialog";
 import { useQuery } from "@tanstack/react-query";
 import { usersQueryOptions } from "@/lib/query/users";
 import { userRole } from "@/lib/entities/users";
@@ -124,10 +124,12 @@ export default function UserManagementPage() {
             Lihat dan kelola semua pengguna di institusi Anda
           </p>
         </div>
-        <Button onClick={() => setInviteDialogOpen(true)}>
-          <Mail className="w-4 h-4 mr-2" />
-          Undang Pengguna
-        </Button>
+        <div className="flex gap-2">
+          <Button onClick={() => setInviteDialogOpen(true)}>
+            <Mail className="w-4 h-4 mr-2" />
+            Undang Pengguna
+          </Button>
+        </div>
       </div>
 
       <InviteUserDialog

@@ -12,7 +12,14 @@ export function useInviteUser(institutionId: string) {
     },
     onError: (error: unknown) => {
       if (isApiError(error)) {
-        toast.error(error.response?.data?.message || "Gagal mengirim undangan");
+        let message =
+          error.response?.data?.message || "Gagal mengirim undangan";
+
+        if (message.includes("already has membership")) {
+          message = "Pengguna sudah terdaftar di institusi ini";
+        }
+
+        toast.error(message);
       } else {
         toast.error("Terjadi kesalahan");
       }

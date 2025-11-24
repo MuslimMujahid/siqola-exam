@@ -63,9 +63,7 @@ export function AuthGuard({
           className="flex flex-col items-center gap-4"
         >
           <Loader2 className="w-8 h-8 animate-spin text-primary" />
-          <p className="text-sm text-muted-foreground">
-            Verifying authentication...
-          </p>
+          <p className="text-sm text-muted-foreground">Mengecek Autentikasi</p>
         </motion.div>
       </div>
     );

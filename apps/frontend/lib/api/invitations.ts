@@ -1,8 +1,9 @@
+import { UserRole } from "../entities/users";
 import { apiClient } from "./client";
 
 export interface InviteUserRequest {
   email: string;
-  role: "EXAMINER" | "EXAMINEE";
+  role: UserRole;
 }
 
 export interface InviteUserResponse {

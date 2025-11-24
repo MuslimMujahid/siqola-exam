@@ -55,6 +55,7 @@ export class InstitutionsService {
                 id: true,
                 email: true,
                 fullName: true,
+                role: true,
               },
             },
           },
@@ -91,5 +92,40 @@ export class InstitutionsService {
     return this.prisma.institution.delete({
       where: { id },
     });
+  }
+
+  async getStats(id: string) {
+    await this.findOne(id);
+
+    const [totalExaminers, totalExaminees, totalExams] = await Promise.all([
+      // Count examiners with active membership in this institution
+      this.prisma.membership.count({
+        where: {
+          institutionId: id,
+          status: 'ACTIVE',
+          user: {
+            role: 'EXAMINER',
+          },
+        },
+      }),
+      // Count examinees with active membership in this institution
+      this.prisma.membership.count({
+        where: {
+          institutionId: id,
+          status: 'ACTIVE',
+          user: {
+            role: 'EXAMINEE',
+          },
+        },
+      }),
+      // Placeholder for total exams - will be 0 until exam feature is implemented
+      Promise.resolve(0),
+    ]);
+
+    return {
+      totalExaminers,
+      totalExaminees,
+      totalExams,
+    };
   }
 }
