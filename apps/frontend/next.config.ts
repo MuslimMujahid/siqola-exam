@@ -1,7 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  images: {
+    remotePatterns: [{ hostname: "www.itb.ac.id" }],
+  },
 };
 
 export default nextConfig;

@@ -4,7 +4,7 @@ import React from "react";
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Search, UserPlus } from "lucide-react";
+import { Search, UserPlus, Mail } from "lucide-react";
 
 import { useDebounce } from "@/hooks/use-debounce";
 import { useAuthStore } from "@/store/auth";
@@ -21,8 +21,10 @@ import {
 } from "@/components/ui/select";
 import { Pagination } from "@/components/ui/pagination";
 import { UserTable } from "./_components/user-table";
+import { InviteUserDialog } from "./_components/invite-user-dialog";
 import { useQuery } from "@tanstack/react-query";
 import { usersQueryOptions } from "@/lib/query/users";
+import { userRole } from "@/lib/entities/users";
 
 export default function UserManagementPage() {
   const { user } = useAuthStore();
@@ -31,6 +33,7 @@ export default function UserManagementPage() {
   const [statusFilter, setStatusFilter] = React.useState("all");
   const [groupFilter, setGroupFilter] = React.useState("all");
   const [currentPage, setCurrentPage] = React.useState(1);
+  const [inviteDialogOpen, setInviteDialogOpen] = React.useState(false);
   const itemsPerPage = 10;
 
   // Debounce search query to avoid too many API calls
@@ -40,7 +43,8 @@ export default function UserManagementPage() {
   const institutionId = user?.memberships?.[0]?.institution?.id;
 
   // Determine role filter based on active tab
-  const roleFilter = activeTab === "examiners" ? "EXAMINER" : "EXAMINEE";
+  const roleFilter =
+    activeTab === "examiners" ? userRole.EXAMINER : userRole.EXAMINEE;
 
   // Build query parameters
   const queryParams = React.useMemo(() => {
@@ -120,21 +124,16 @@ export default function UserManagementPage() {
             Lihat dan kelola semua pengguna di institusi Anda
           </p>
         </div>
-        <div className="flex gap-2">
-          <Button asChild>
-            <Link href="/dashboard/admin/users/add-examiner">
-              <UserPlus className="w-4 h-4 mr-2" />
-              Tambah Penguji
-            </Link>
-          </Button>
-          <Button variant="outline" asChild>
-            <Link href="/dashboard/admin/users/add-examinee">
-              <UserPlus className="w-4 h-4 mr-2" />
-              Tambah Peserta
-            </Link>
-          </Button>
-        </div>
+        <Button onClick={() => setInviteDialogOpen(true)}>
+          <Mail className="w-4 h-4 mr-2" />
+          Undang Pengguna
+        </Button>
       </div>
+
+      <InviteUserDialog
+        open={inviteDialogOpen}
+        onOpenChange={setInviteDialogOpen}
+      />
 
       <motion.div
         initial={{ opacity: 0, y: 20 }}

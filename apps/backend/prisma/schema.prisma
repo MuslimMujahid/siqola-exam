@@ -24,21 +24,24 @@ enum Role {
 enum MembershipStatus {
   ACTIVE
   SUSPENDED
+  PENDING
 }
 
 model User {
   id            String   @id @default(cuid())
   email         String   @unique
-  password      String
-  fullName      String
-  phoneNumber   String
+  password      String?
+  fullName      String?
+  phoneNumber   String?
   role          Role     @default(EXAMINEE)
+  emailVerified Boolean  @default(false)
   lastLogin     DateTime?
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
   memberships             Membership[]
   groupMembers            GroupMember[]
+  invitationTokens        InvitationToken[]
 
   @@map("users")
 }
@@ -115,3 +118,18 @@ model GroupMember {
   @@map("group_members")
 }
 
+model InvitationToken {
+  id            String   @id @default(cuid())
+  token         String   @unique @default(cuid())
+  email         String
+  role          Role
+  userId        String?
+  institutionId String
+  expiresAt     DateTime
+  used          Boolean  @default(false)
+  createdAt     DateTime @default(now())
+
+  user User? @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("invitation_tokens")
+}

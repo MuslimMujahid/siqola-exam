@@ -2,7 +2,14 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { MoreVertical, Eye, Ban, CheckCircle, Trash2 } from "lucide-react";
+import {
+  MoreVertical,
+  Eye,
+  Ban,
+  CheckCircle,
+  Trash2,
+  Hourglass,
+} from "lucide-react";
 import { useUpdateMembershipStatus } from "@/hooks/use-update-membership-status";
 import { useDeleteUser } from "@/hooks/use-delete-user";
 import { useConfirm } from "@/hooks/use-confirm";
@@ -78,6 +85,13 @@ export function UserTable({
           <Badge variant="destructive">
             <Ban className="w-3 h-3 mr-1" />
             Ditangguhkan
+          </Badge>
+        );
+      case "pending":
+        return (
+          <Badge variant="warning">
+            <Hourglass className="w-3 h-3 mr-1" />
+            Menunggu
           </Badge>
         );
       default:
