@@ -4,10 +4,10 @@ import {
   UnauthorizedException,
   NotFoundException,
 } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '../prisma/prisma.service';
 import { LoginDto } from './dto/login.dto';
 import * as bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
 
 import { RequestRegistrationOtpDto } from './dto/request-registration-otp.dto';
 import { VerifyRegistrationOtpDto } from './dto/verify-registration-otp.dto';
@@ -15,7 +15,10 @@ import { ResendRegistrationOtpDto } from './dto/resend-registration-otp.dto';
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly jwtService: JwtService,
+  ) {}
 
   async requestRegistrationOtp(requestDto: RequestRegistrationOtpDto) {
     const { email, password, institutionName, address, phoneNumber } =
@@ -135,15 +138,10 @@ export class AuthService {
     });
 
     // Generate JWT token for auto-login
-    const jwtSecret = process.env.JWT_SECRET || 'your-secret-key';
-    const token = jwt.sign(
-      {
-        userId: result.user.id,
-        email: result.user.email,
-      },
-      jwtSecret,
-      { expiresIn: '7d' },
-    );
+    const token = this.jwtService.sign({
+      userId: result.user.id,
+      email: result.user.email,
+    });
 
     return {
       ...result,
@@ -189,18 +187,12 @@ export class AuthService {
     });
 
     // Generate JWT token
-    const jwtSecret = process.env.JWT_SECRET || 'your-secret-key';
-    const token = jwt.sign(
-      {
-        userId: user.id,
-        email: user.email,
-      },
-      jwtSecret,
-      { expiresIn: '7d' },
-    );
+    const token = this.jwtService.sign({
+      userId: user.id,
+      email: user.email,
+    });
 
     // Remove password from response
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password: _, ...userWithoutPassword } = user;
 
     return {
