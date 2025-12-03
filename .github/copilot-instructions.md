@@ -1,4 +1,4 @@
-# Siqola Exam - Copilot Instructions
+# Ziqola Exam - Copilot Instructions
 
 ## Repository Overview
 

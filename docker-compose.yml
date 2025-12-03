@@ -1,12 +1,12 @@
 services:
   postgres:
     image: postgres:16-alpine
-    container_name: siqola-exam-postgres
+    container_name: ziqola-exam-postgres
     restart: unless-stopped
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: siqola_exam
+      POSTGRES_DB: ziqola_exam
     ports:
       - "5432:5432"
     volumes:

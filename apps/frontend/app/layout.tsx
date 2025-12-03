@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Siqola Exam - Institution Portal",
+  title: "Ziqola Exam - Institution Portal",
   description: "Online exam platform for educational institutions",
 };
 

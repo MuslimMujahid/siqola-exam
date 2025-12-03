@@ -2,7 +2,7 @@
 
 import React from "react";
 import { Construction } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils/cn";
 
 interface ComingSoonWrapperProps {
   children: React.ReactNode;

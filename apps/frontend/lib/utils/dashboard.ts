@@ -12,7 +12,7 @@ export function getDashboardRoute(role?: string): string {
     case "EXAMINER":
       return "/dashboard/examiner";
     case "EXAMINEE":
-      return "/dashboard/student";
+      return "/dashboard/examinee";
     default:
       return "/dashboard";
   }

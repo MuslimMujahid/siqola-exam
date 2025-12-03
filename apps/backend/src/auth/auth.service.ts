@@ -12,6 +12,7 @@ import * as bcrypt from 'bcrypt';
 import { RequestRegistrationOtpDto } from './dto/request-registration-otp.dto';
 import { VerifyRegistrationOtpDto } from './dto/verify-registration-otp.dto';
 import { ResendRegistrationOtpDto } from './dto/resend-registration-otp.dto';
+import { Role } from 'generated/prisma/enums';
 
 @Injectable()
 export class AuthService {
@@ -104,12 +105,14 @@ export class AuthService {
           password: pending.hashedPassword,
           fullName: pending.fullName || pending.institutionName,
           phoneNumber: pending.phoneNumber,
+          role: Role.ADMIN,
         },
         select: {
           id: true,
           email: true,
           fullName: true,
           phoneNumber: true,
+          role: true,
           createdAt: true,
         },
       });
@@ -201,6 +204,9 @@ export class AuthService {
         email: userWithoutPassword.email,
         fullName: userWithoutPassword.fullName,
         role: userWithoutPassword.role,
+        createdAt: userWithoutPassword.createdAt,
+        updatedAt: userWithoutPassword.updatedAt,
+        lastLogin: userWithoutPassword.lastLogin,
         memberships: userWithoutPassword.memberships.map((m) => ({
           status: m.status,
           institution: {

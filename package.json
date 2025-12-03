@@ -1,5 +1,5 @@
 {
-  "name": "siqola-exam",
+  "name": "ziqola-exam",
   "private": true,
   "scripts": {
     "build": "turbo run build",

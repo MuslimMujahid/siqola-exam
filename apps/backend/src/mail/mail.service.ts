@@ -139,7 +139,7 @@ export class MailService {
           </div>
           <div class="content">
             <p>Halo,</p>
-            <p>Anda telah diundang untuk bergabung dengan <strong>${institutionName}</strong> sebagai <strong>${roleInIndonesian}</strong> di platform Siqola Exam.</p>
+            <p>Anda telah diundang untuk bergabung dengan <strong>${institutionName}</strong> sebagai <strong>${roleInIndonesian}</strong> di platform Ziqola Exam.</p>
             
             <div class="info-box">
               <p><span class="info-label">Institusi:</span> ${institutionName}</p>
@@ -169,7 +169,7 @@ export class MailService {
             <p style="margin-top: 30px; font-size: 14px; color: #666;">Jika Anda tidak mengharapkan email ini, Anda dapat mengabaikannya dengan aman.</p>
           </div>
           <div class="footer">
-            <p style="margin: 0;">© ${new Date().getFullYear()} Siqola Exam. All rights reserved.</p>
+            <p style="margin: 0;">© ${new Date().getFullYear()} Ziqola Exam. All rights reserved.</p>
             <p style="margin: 10px 0 0;">Platform Ujian Online yang Aman dan Terpercaya</p>
           </div>
         </div>
@@ -182,7 +182,7 @@ export class MailService {
 
         Halo,
 
-        Anda telah diundang untuk bergabung dengan ${institutionName} sebagai ${roleInIndonesian} di platform Siqola Exam.
+        Anda telah diundang untuk bergabung dengan ${institutionName} sebagai ${roleInIndonesian} di platform Ziqola Exam.
 
         Informasi Undangan:
         - Institusi: ${institutionName}
@@ -203,13 +203,13 @@ export class MailService {
         Jika Anda tidak mengharapkan email ini, Anda dapat mengabaikannya dengan aman.
 
         ---
-        © ${new Date().getFullYear()} Siqola Exam
+        © ${new Date().getFullYear()} Ziqola Exam
         Platform Ujian Online yang Aman dan Terpercaya
     `;
 
     try {
       const info = (await this.transporter.sendMail({
-        from: `"Siqola Exam" <${process.env.SMTP_EMAIL}>`,
+        from: `"Ziqola Exam" <${process.env.SMTP_EMAIL}>`,
         to,
         subject: `Undangan Bergabung: ${institutionName} - ${roleInIndonesian}`,
         text: textContent,

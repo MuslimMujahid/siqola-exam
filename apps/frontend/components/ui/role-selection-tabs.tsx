@@ -1,15 +1,15 @@
-import { type UserRoleType } from "@/lib/schemas/auth";
+import { UserRole } from "@/modules/users/entities";
 
 interface RoleSelectionTabsProps {
-  selectedRole: UserRoleType;
-  onRoleChange: (role: UserRoleType) => void;
-  roles?: Array<{ value: UserRoleType; label: string }>;
+  selectedRole: UserRole;
+  onRoleChange: (role: UserRole) => void;
+  roles?: Array<{ value: UserRole; label: string }>;
 }
 
 const DEFAULT_ROLES = [
-  { value: "admin" as UserRoleType, label: "Admin" },
-  { value: "examiner" as UserRoleType, label: "Penguji" },
-  { value: "examinee" as UserRoleType, label: "Peserta" },
+  { value: "ADMIN" as UserRole, label: "Admin" },
+  { value: "EXAMINER" as UserRole, label: "Penguji" },
+  { value: "EXAMINEE" as UserRole, label: "Peserta" },
 ];
 
 export function RoleSelectionTabs({

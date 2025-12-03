@@ -1,6 +1,6 @@
 # Prisma Database Seeding
 
-This directory contains the database schema and seeding scripts for the Siqola Exam backend.
+This directory contains the database schema and seeding scripts for the Ziqola Exam backend.
 
 ## Running Seeds
 
