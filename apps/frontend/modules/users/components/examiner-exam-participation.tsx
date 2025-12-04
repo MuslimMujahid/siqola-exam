@@ -167,9 +167,7 @@ export function ExaminerExamParticipation({
                       </TableCell>
                       <TableCell className="text-right">
                         <Button variant="ghost" size="sm" asChild>
-                          <Link
-                            href={`/dashboard/admin/exams/${assignment.examId}`}
-                          >
+                          <Link href={`/dashboard/exams/${assignment.examId}`}>
                             <Eye className="w-4 h-4 mr-2" />
                             Lihat Ujian
                           </Link>

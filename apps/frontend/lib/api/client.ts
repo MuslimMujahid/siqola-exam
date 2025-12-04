@@ -22,23 +22,8 @@ export const apiClient = axios.create({
   headers: {
     "Content-Type": "application/json",
   },
-  withCredentials: true,
+  withCredentials: true, // Important: This sends cookies with requests
 });
-
-// Request interceptor to add auth token
-apiClient.interceptors.request.use(
-  (config) => {
-    // Get token from localStorage if it exists
-    const token = localStorage.getItem("token");
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
 
 // Response interceptor for error handling
 apiClient.interceptors.response.use(
@@ -49,7 +34,6 @@ apiClient.interceptors.response.use(
       switch (error.response.status) {
         case 401:
           // Unauthorized - only redirect if not already on login page
-          localStorage.removeItem("token");
           if (
             typeof window !== "undefined" &&
             !window.location.pathname.includes("/login")

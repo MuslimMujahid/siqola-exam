@@ -2,7 +2,6 @@ import { useRouter } from "next/navigation";
 
 import { apiClient, isApiError } from "@/lib/api/client";
 import { useMutationWrapper } from "@/hooks/use-mutation";
-import { getDashboardRoute } from "@/lib/utils/dashboard";
 import { useAuthStore, User } from "../store/auth";
 
 export interface RequestRegistrationOtpParams {
@@ -73,11 +72,6 @@ export async function verifyRegistrationOtp(
     "/auth/verify-registration-otp",
     data
   );
-  // Store the token in localStorage for auto-login
-  if (response.data.token) {
-    localStorage.setItem("token", response.data.token);
-  }
-
   return response.data;
 }
 
@@ -131,7 +125,7 @@ export function useResendRegistrationOtp() {
 /** Custom hook for verifying registration OTP */
 export const useVerifyRegistrationOtp = () => {
   const router = useRouter();
-  const { setAuthenticated, setError, setToken, setUser, setInstitution } =
+  const { setAuthenticated, setError, setUser, setInstitution } =
     useAuthStore();
 
   return useMutationWrapper({
@@ -140,14 +134,12 @@ export const useVerifyRegistrationOtp = () => {
       setError(null);
 
       // Auto-login after successful OTP verification
-      setToken(data.token);
       setUser(data.user);
       setInstitution(data.user.memberships?.[0]?.institution ?? null);
       setAuthenticated(true);
 
-      // Redirect to appropriate dashboard based on user's role
-      const dashboardRoute = getDashboardRoute(data.user.role);
-      router.push(dashboardRoute);
+      // Redirect to dashboard
+      router.push("/dashboard");
     },
     onError: (error) => {
       if (isApiError(error)) {

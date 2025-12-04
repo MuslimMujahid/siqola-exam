@@ -71,7 +71,7 @@ export function GroupsManagement() {
           </p>
         </div>
         <Button asChild>
-          <Link href="/dashboard/admin/groups/create">
+          <Link href="/dashboard/groups/create">
             <UserCog className="w-4 h-4 mr-2" />
             Buat Grup
           </Link>
@@ -129,7 +129,7 @@ export function GroupsManagement() {
                 </p>
                 {!searchQuery && (
                   <Button asChild>
-                    <Link href="/dashboard/admin/groups/create">
+                    <Link href="/dashboard/groups/create">
                       <UserCog className="w-4 h-4 mr-2" />
                       Buat Grup
                     </Link>

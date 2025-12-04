@@ -130,7 +130,7 @@ export function RecentUsersSection() {
             className="w-full text-sm text-muted-foreground hover:text-foreground"
             asChild
           >
-            <Link href="/dashboard/admin/users">Lihat Semua Pengguna</Link>
+            <Link href="/dashboard/users">Lihat Semua Pengguna</Link>
           </Button>
         </div>
       </Card>

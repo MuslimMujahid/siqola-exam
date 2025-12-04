@@ -64,9 +64,7 @@ export function RecentActivityFeed({ activities }: RecentActivityFeedProps) {
             className="w-full text-sm text-muted-foreground hover:text-foreground"
             asChild
           >
-            <Link href="/dashboard/admin/activity">
-              Lihat Semua Log Aktivitas
-            </Link>
+            <Link href="/dashboard/activity">Lihat Semua Log Aktivitas</Link>
           </Button>
         </div>
       </Card>

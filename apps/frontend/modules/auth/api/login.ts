@@ -3,7 +3,6 @@ import { useRouter } from "next/navigation";
 
 import { apiClient } from "@/lib/api/client";
 import { useMutationWrapper } from "@/hooks/use-mutation";
-import { getDashboardRoute } from "@/lib/utils/dashboard";
 import { UserRole, UserStatus } from "@/modules/users/entities";
 import { useAuthStore } from "../store/auth";
 
@@ -47,20 +46,14 @@ export interface LoginResponse {
  */
 export async function login(data: LoginParams): Promise<LoginResponse> {
   const response = await apiClient.post<LoginResponse>("/auth/login", data);
-
-  // Store the token in localStorage
-  if (response.data.token) {
-    localStorage.setItem("token", response.data.token);
-  }
-
   return response.data;
 }
 
 /**
  * Logout user
  */
-export function logout(): void {
-  localStorage.removeItem("token");
+export async function logout(): Promise<void> {
+  await apiClient.post("/auth/logout");
   if (typeof window !== "undefined") {
     window.location.href = "/login";
   }
@@ -72,23 +65,20 @@ export function logout(): void {
  */
 export function useLogin() {
   const router = useRouter();
-  const { setUser, setToken, setAuthenticated, setInstitution } =
-    useAuthStore();
+  const { setUser, setAuthenticated, setInstitution } = useAuthStore();
 
   return useMutationWrapper({
     mutationFn: login,
     onSuccess: (data) => {
-      // Update auth store with user data and token
-      setToken(data.token);
+      // Update auth store with user data
       setUser(data.user);
       // TODO: Select default the first institution for now
       // Later, implement institution selection if user has multiple memberships
       setInstitution(data.user.memberships?.[0]?.institution);
       setAuthenticated(true);
 
-      // Redirect to appropriate dashboard based on user's role
-      const dashboardRoute = getDashboardRoute(data.user.role);
-      router.push(dashboardRoute);
+      // Redirect to dashboard
+      router.push("/dashboard");
     },
   });
 }

@@ -105,27 +105,27 @@ const mockNotifications = {
 
 // Navigation items for each role
 const adminNavigation = [
-  { href: "/dashboard/admin/users", label: "Manajemen Pengguna", icon: Users },
+  { href: "/dashboard/users", label: "Manajemen Pengguna", icon: Users },
   {
-    href: "/dashboard/admin/settings",
+    href: "/dashboard/settings",
     label: "Pengaturan Institusi",
     icon: Building2,
     comingSoon: true,
   },
   {
-    href: "/dashboard/admin/exams",
+    href: "/dashboard/exams",
     label: "Ujian",
     icon: FileText,
     comingSoon: true,
   },
   {
-    href: "/dashboard/admin/activity",
+    href: "/dashboard/activity",
     label: "Log Aktivitas",
     icon: Activity,
     comingSoon: true,
   },
   {
-    href: "/dashboard/admin/help",
+    href: "/dashboard/help",
     label: "Bantuan",
     icon: HelpCircle,
     comingSoon: true,
@@ -160,10 +160,6 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   const institutions = user?.memberships?.map((m) => m.institution) || [];
   const hasMultipleInstitutions = institutions.length > 1;
 
-  // Determine base path and navigation
-  const basePath = userRole
-    ? `/dashboard/${userRole.toLowerCase()}`
-    : "/dashboard";
   const showNavigation = userRole === "ADMIN";
 
   return (
@@ -173,7 +169,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
         <div className="container mx-auto px-6">
           <div className="flex items-center justify-between py-4">
             <div className="flex items-center gap-4">
-              <Link href={basePath}>
+              <Link href="/dashboard">
                 <h1 className="text-lg font-semibold tracking-tight text-primary">
                   ZiqolaExam
                 </h1>
@@ -320,19 +316,13 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem asChild>
-                    <Link
-                      href={`${basePath}/profile`}
-                      className="cursor-pointer"
-                    >
+                    <Link href="/dashboard/profile" className="cursor-pointer">
                       <User className="w-4 h-4" />
                       {userRole === "ADMIN" ? "Lihat Profil" : "View Profile"}
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
-                    <Link
-                      href={`${basePath}/settings`}
-                      className="cursor-pointer"
-                    >
+                    <Link href="/dashboard/settings" className="cursor-pointer">
                       <Settings className="w-4 h-4" />
                       {userRole === "ADMIN" ? "Pengaturan" : "Settings"}
                     </Link>
@@ -358,12 +348,12 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                 const Icon = item.icon;
                 const isActive =
                   pathname === item.href ||
-                  (item.href === "/dashboard/admin/users" &&
-                    (pathname === "/dashboard/admin/users" ||
-                      pathname === "/dashboard/admin/groups"));
+                  (item.href === "/dashboard/users" &&
+                    (pathname === "/dashboard/users" ||
+                      pathname === "/dashboard/groups"));
 
                 // Special handling for User Management with dropdown
-                if (item.href === "/dashboard/admin/users") {
+                if (item.href === "/dashboard/users") {
                   return (
                     <DropdownMenu key={item.href}>
                       <DropdownMenuTrigger asChild>
@@ -382,7 +372,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                       <DropdownMenuContent align="start">
                         <DropdownMenuItem asChild>
                           <Link
-                            href="/dashboard/admin/users"
+                            href="/dashboard/users"
                             className="cursor-pointer"
                           >
                             <Users className="w-4 h-4 mr-2" />
@@ -391,7 +381,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                         </DropdownMenuItem>
                         <DropdownMenuItem asChild>
                           <Link
-                            href="/dashboard/admin/groups"
+                            href="/dashboard/groups"
                             className="cursor-pointer"
                           >
                             <UserCog className="w-4 h-4 mr-2" />

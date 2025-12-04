@@ -124,12 +124,14 @@ export default function UsersManagement() {
             Lihat dan kelola semua pengguna di institusi Anda
           </p>
         </div>
-        <div className="flex gap-2">
-          <Button onClick={() => setInviteDialogOpen(true)}>
-            <MailIcon className="w-4 h-4 mr-2" />
-            Undang Pengguna
-          </Button>
-        </div>
+        {user?.role === userRole.ADMIN && (
+          <div className="flex gap-2">
+            <Button onClick={() => setInviteDialogOpen(true)}>
+              <MailIcon className="w-4 h-4 mr-2" />
+              Undang Pengguna
+            </Button>
+          </div>
+        )}
       </div>
 
       <InviteUserDialog

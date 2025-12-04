@@ -5,7 +5,6 @@ import React from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 
-import { getDashboardRoute } from "@/lib/utils/dashboard";
 import { useAuthStore } from "../store/auth";
 import { LoginForm } from "../components/login-form";
 
@@ -20,8 +19,7 @@ export function Login({ searchParams }: LoginProps) {
 
   React.useEffect(() => {
     if (isAuthenticated && user) {
-      const dashboardRoute = getDashboardRoute(user.role);
-      router.push(dashboardRoute);
+      router.push("/dashboard");
     }
   }, [isAuthenticated, user, router]);
 

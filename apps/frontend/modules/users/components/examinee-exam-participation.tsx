@@ -165,16 +165,14 @@ export function ExamineeExamParticipation({
                         <div className="flex items-center justify-end gap-2">
                           <Button variant="ghost" size="sm" asChild>
                             <Link
-                              href={`/dashboard/admin/exams/${attempt.examId}/attempts/${attempt.id}`}
+                              href={`/dashboard/exams/${attempt.examId}/attempts/${attempt.id}`}
                             >
                               <Eye className="w-4 h-4 mr-2" />
                               Lihat Percobaan
                             </Link>
                           </Button>
                           <Button variant="ghost" size="sm" asChild>
-                            <Link
-                              href={`/dashboard/admin/exams/${attempt.examId}`}
-                            >
+                            <Link href={`/dashboard/exams/${attempt.examId}`}>
                               <ExternalLink className="w-4 h-4" />
                             </Link>
                           </Button>

@@ -89,7 +89,7 @@ export function GroupTable({ groups }: GroupTableProps) {
                     <DropdownMenuContent align="end">
                       <DropdownMenuItem asChild>
                         <Link
-                          href={`/dashboard/admin/groups/${group.id}`}
+                          href={`/dashboard/groups/${group.id}`}
                           className="cursor-pointer"
                         >
                           <Eye className="w-4 h-4 mr-2" />
@@ -98,7 +98,7 @@ export function GroupTable({ groups }: GroupTableProps) {
                       </DropdownMenuItem>
                       <DropdownMenuItem asChild>
                         <Link
-                          href={`/dashboard/admin/groups/${group.id}/edit`}
+                          href={`/dashboard/groups/${group.id}/edit`}
                           className="cursor-pointer"
                         >
                           <Edit className="w-4 h-4 mr-2" />

@@ -93,7 +93,7 @@ export function EditGroup({ params }: EditGroupProps) {
         <p className="text-muted-foreground">Grup tidak ditemukan</p>
         <Button
           variant="outline"
-          onClick={() => router.push("/dashboard/admin/groups")}
+          onClick={() => router.push("/dashboard/groups")}
           className="mt-4"
         >
           Kembali ke Daftar Grup

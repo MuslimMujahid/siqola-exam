@@ -243,7 +243,7 @@ export function UsersTable({
             <DropdownMenuContent align="end">
               <DropdownMenuItem asChild>
                 <Link
-                  href={`/dashboard/admin/users/${user.id}`}
+                  href={`/dashboard/users/${user.id}`}
                   className="cursor-pointer"
                 >
                   <Eye className="w-4 h-4 mr-2" />

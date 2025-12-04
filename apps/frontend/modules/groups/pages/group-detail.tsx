@@ -197,9 +197,7 @@ export function GroupDetail({ params }: GroupDetailProps) {
         <div className="flex gap-2">
           <Button
             variant="outline"
-            onClick={() =>
-              router.push(`/dashboard/admin/groups/${groupId}/edit`)
-            }
+            onClick={() => router.push(`/dashboard/groups/${groupId}/edit`)}
           >
             <Edit className="w-4 h-4 mr-2" />
             Edit Grup

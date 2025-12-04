@@ -144,6 +144,7 @@ export class AuthService {
     const token = this.jwtService.sign({
       userId: result.user.id,
       email: result.user.email,
+      role: result.user.role,
     });
 
     return {
@@ -193,6 +194,7 @@ export class AuthService {
     const token = this.jwtService.sign({
       userId: user.id,
       email: user.email,
+      role: user.role,
     });
 
     // Remove password from response

@@ -95,7 +95,7 @@ export function UserDetail({ params }: UserDetailProps) {
           <p className="text-sm text-muted-foreground">
             Pengguna yang Anda cari tidak ditemukan atau tidak tersedia.
           </p>
-          <Button onClick={() => router.push("/dashboard/admin/users")}>
+          <Button onClick={() => router.push("/dashboard/users")}>
             <ArrowLeft className="w-4 h-4 mr-2" />
             Kembali ke Daftar Pengguna
           </Button>
@@ -117,7 +117,7 @@ export function UserDetail({ params }: UserDetailProps) {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => router.push("/dashboard/admin/users")}
+              onClick={() => router.push("/dashboard/users")}
             >
               <ArrowLeft className="w-4 h-4" />
             </Button>
