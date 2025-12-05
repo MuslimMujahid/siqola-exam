@@ -116,7 +116,6 @@ const adminNavigation = [
     href: "/dashboard/exams",
     label: "Ujian",
     icon: FileText,
-    comingSoon: true,
   },
   {
     href: "/dashboard/activity",

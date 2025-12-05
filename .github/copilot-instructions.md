@@ -13,7 +13,7 @@ This is a **Turborepo monorepo** both frontend and backend for an online exam pl
 - **Monorepo Tool**: Turborepo
 - **Database**: PostgreSQL
 - **ORM**: Prisma
-- **Language**: The contents will mainly be in Indonesian, but code comments and documentation should be in English.
+- **Language**: The contents will mainly be in Indonesian, but the codes, comments, and documentations should be in English.
 
 ## Command Line Instructions
 
@@ -84,18 +84,37 @@ This is a **Turborepo monorepo** both frontend and backend for an online exam pl
 - Use shadcn components as the base for all UI elements.
 - Create custom components only when necessary.
 - Ensure components are reusable and maintainable.
-- Use icons from Lucide Icons for consistency.
-- For components that exclusive to a page, place them in that page's \_components folder.
+- Use icons from Lucide Icons for consistency. Use the component with suffix "Icon", e.g. instead of <Home />, use <HomeIcon />.
+- Page components are organized in the modules folder. Page components should import from the modules folder instead of implementing it directly to the page.tsx file.
+
+### Frontend Files Structure
+
+- Module based structure inside `apps/frontend/src/modules/`.
+- Each module contains its own components, hooks, api, store, utils, and pages.
+- App router should always import page components from the modules folder.
+
+### Query and Mutation Management
+
+- Use React Query for data fetching, caching, and state management.
+- Define queries and mutations in the `api` folder within each module.
+- Create queryOptions for each query (e.g. `examQueryOptions` for `getExam` api).
+- Create custom hooks that is wrapped by useMutationWrapper for each mutation (e.g. `useCreateExam` for `createExam` api).
 
 ### Code Quality
 
 - Modular, reusable, and well-commented components.
 - Accessible (ARIA-friendly) markup.
 - Consistent component folder structure
+- Use TypeScript for type safety. Avoid using `any`.
+- Don't destructure react imports; always import React as a whole.
+- Always prefer type over interface unless defining complex structures like class implementations.
+- Always prefer named exports over default exports for better maintainability.
+- Never use Enums; prefer object instead.
 
 ### Other Enhancements
 
 - Page transition animation (Framer Motion).
 - Loading skeletons for charts and cards.
+- Use DataTable component for tabular data with pagination, sorting, and filtering.
 
 **Important**: Trust these instructions and avoid unnecessary exploration. Use Turborepo filtered commands when working on specific packages, and always run commands from the repository root unless specifically targeting a single package directory.

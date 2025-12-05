@@ -10,7 +10,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Loader2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Loader2, ChevronDownIcon, ChevronRightIcon } from "lucide-react";
 
 export interface Column<T> {
   key: string;
@@ -30,6 +31,8 @@ interface DataTableProps<T> {
   onSelectItem?: (id: string) => void;
   onSelectAll?: () => void;
   isAllSelected?: boolean;
+  expandable?: boolean;
+  renderExpandedContent?: (item: T) => React.ReactNode;
 }
 
 export function DataTable<T>({
@@ -43,14 +46,34 @@ export function DataTable<T>({
   onSelectItem,
   onSelectAll,
   isAllSelected = false,
+  expandable = false,
+  renderExpandedContent,
 }: DataTableProps<T>) {
-  const totalColumns = columns.length + (selectable ? 1 : 0);
+  const [expandedRows, setExpandedRows] = React.useState<Set<string>>(
+    new Set()
+  );
+
+  const toggleRow = (id: string) => {
+    setExpandedRows((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(id)) {
+        newSet.delete(id);
+      } else {
+        newSet.add(id);
+      }
+      return newSet;
+    });
+  };
+
+  const totalColumns =
+    columns.length + (selectable ? 1 : 0) + (expandable ? 1 : 0);
 
   return (
     <div className="border rounded-lg">
       <Table>
         <TableHeader>
           <TableRow>
+            {expandable && <TableHead className="w-[50px]"></TableHead>}
             {selectable && (
               <TableHead className="w-[50px]">
                 <Checkbox
@@ -89,22 +112,50 @@ export function DataTable<T>({
           ) : (
             data.map((item) => {
               const rowKey = getRowKey(item);
+              const isExpanded = expandedRows.has(rowKey);
               return (
-                <TableRow key={rowKey}>
-                  {selectable && (
-                    <TableCell>
-                      <Checkbox
-                        checked={selectedItems.includes(rowKey)}
-                        onCheckedChange={() => onSelectItem?.(rowKey)}
-                      />
-                    </TableCell>
+                <React.Fragment key={rowKey}>
+                  <TableRow>
+                    {expandable && (
+                      <TableCell>
+                        <Button
+                          variant="ghost"
+                          size="icon-sm"
+                          onClick={() => toggleRow(rowKey)}
+                        >
+                          {isExpanded ? (
+                            <ChevronDownIcon className="w-4 h-4" />
+                          ) : (
+                            <ChevronRightIcon className="w-4 h-4" />
+                          )}
+                        </Button>
+                      </TableCell>
+                    )}
+                    {selectable && (
+                      <TableCell>
+                        <Checkbox
+                          checked={selectedItems.includes(rowKey)}
+                          onCheckedChange={() => onSelectItem?.(rowKey)}
+                        />
+                      </TableCell>
+                    )}
+                    {columns.map((column) => (
+                      <TableCell key={column.key} className={column.className}>
+                        {column.cell(item)}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                  {expandable && isExpanded && renderExpandedContent && (
+                    <TableRow>
+                      <TableCell
+                        colSpan={totalColumns}
+                        className="bg-muted/30 p-4"
+                      >
+                        {renderExpandedContent(item)}
+                      </TableCell>
+                    </TableRow>
                   )}
-                  {columns.map((column) => (
-                    <TableCell key={column.key} className={column.className}>
-                      {column.cell(item)}
-                    </TableCell>
-                  ))}
-                </TableRow>
+                </React.Fragment>
               );
             })
           )}

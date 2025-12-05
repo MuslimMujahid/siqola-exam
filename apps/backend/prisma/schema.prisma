@@ -39,9 +39,12 @@ model User {
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
-  memberships             Membership[]
-  groupMembers            GroupMember[]
-  invitationTokens        InvitationToken[]
+  memberships      Membership[]
+  groupMembers     GroupMember[]
+  invitationTokens InvitationToken[]
+  createdExams     Exam[]
+  examAssignments  ExamAssignment[]
+  examAttempts     ExamAttempt[]
 
   @@map("users")
 }
@@ -56,6 +59,8 @@ model Institution {
 
   memberships Membership[]
   groups      Group[]
+  exams       Exam[]
+  tags        Tag[]
 
   @@map("institutions")
 }
@@ -99,8 +104,9 @@ model Group {
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
-  institution  Institution   @relation(fields: [institutionId], references: [id], onDelete: Cascade)
-  groupMembers GroupMember[]
+  institution     Institution      @relation(fields: [institutionId], references: [id], onDelete: Cascade)
+  groupMembers    GroupMember[]
+  examAssignments ExamAssignment[]
 
   @@map("groups")
 }
@@ -132,4 +138,147 @@ model InvitationToken {
   user User? @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("invitation_tokens")
+}
+
+enum ExamStatus {
+  DRAFT
+  PUBLISHED
+  CLOSED
+}
+
+enum QuestionType {
+  MULTIPLE_CHOICE
+  ESSAY
+  SHORT_ANSWER
+}
+
+enum AttemptStatus {
+  NOT_STARTED
+  IN_PROGRESS
+  COMPLETED
+}
+
+model Tag {
+  id            String   @id @default(cuid())
+  name          String
+  institutionId String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  institution Institution? @relation(fields: [institutionId], references: [id], onDelete: Cascade)
+  examTags    ExamTag[]
+
+  @@unique([name, institutionId])
+  @@map("tags")
+}
+
+model Exam {
+  id                String     @id @default(cuid())
+  title             String
+  description       String?
+  instructions      String?
+  duration          Int        // Duration in minutes
+  passingGrade      Float
+  shuffleOptions    Boolean    @default(false)
+  maxAttempts       Int        @default(1)
+  status            ExamStatus @default(DRAFT)
+  institutionId     String
+  creatorId         String
+  availableFrom     DateTime?
+  availableUntil    DateTime?
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime   @updatedAt
+
+  institution  Institution       @relation(fields: [institutionId], references: [id], onDelete: Cascade)
+  creator      User              @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  questions    Question[]
+  assignments  ExamAssignment[]
+  attempts     ExamAttempt[]
+  examTags     ExamTag[]
+
+  @@map("exams")
+}
+
+model ExamTag {
+  id        String   @id @default(cuid())
+  examId    String
+  tagId     String
+  createdAt DateTime @default(now())
+
+  exam Exam @relation(fields: [examId], references: [id], onDelete: Cascade)
+  tag  Tag  @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@unique([examId, tagId])
+  @@map("exam_tags")
+}
+
+model Question {
+  id            String       @id @default(cuid())
+  examId        String
+  type          QuestionType
+  content       Json         // Rich text content from Slate
+  options       Json?        // For multiple choice: array of options
+  correctAnswer Json?        // For multiple choice: correct option(s), for short answer: acceptable answers
+  points        Float
+  order         Int
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  exam    Exam     @relation(fields: [examId], references: [id], onDelete: Cascade)
+  answers Answer[]
+
+  @@map("questions")
+}
+
+model ExamAssignment {
+  id              String    @id @default(cuid())
+  examId          String
+  userId          String?
+  groupId         String?
+  availableFrom   DateTime?
+  availableUntil  DateTime?
+  createdAt       DateTime  @default(now())
+
+  exam  Exam   @relation(fields: [examId], references: [id], onDelete: Cascade)
+  user  User?  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  group Group? @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  @@unique([examId, userId])
+  @@unique([examId, groupId])
+  @@map("exam_assignments")
+}
+
+model ExamAttempt {
+  id          String        @id @default(cuid())
+  examId      String
+  userId      String
+  status      AttemptStatus @default(NOT_STARTED)
+  startedAt   DateTime?
+  completedAt DateTime?
+  score       Float?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  exam    Exam     @relation(fields: [examId], references: [id], onDelete: Cascade)
+  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  answers Answer[]
+
+  @@map("exam_attempts")
+}
+
+model Answer {
+  id            String   @id @default(cuid())
+  attemptId     String
+  questionId    String
+  answerContent Json     // User's answer
+  score         Float?   // Points earned, null if not graded yet
+  feedback      String?  // Manual feedback for essay questions
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  attempt  ExamAttempt @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  question Question    @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@unique([attemptId, questionId])
+  @@map("answers")
 }
